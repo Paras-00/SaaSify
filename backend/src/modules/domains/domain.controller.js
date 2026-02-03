@@ -1,7 +1,7 @@
 import { errorResponse, successResponse } from '../../utils/response.js';
 
-import ActivityLog from '../models/ActivityLog.js';
-import Domain from '../models/Domain.js';
+import ActivityLog from '../../models/ActivityLog.js';
+import Domain from '../../models/Domain.js';
 import godaddyService from '../../services/godaddy.service.js';
 import logger from '../../utils/logger.js';
 

@@ -1,4 +1,4 @@
-import { DOMAIN_STATUS } from '../../constants/enums.js';
+import { DOMAIN_STATUS } from '../constants/enums.js';
 import mongoose from 'mongoose';
 
 const domainSchema = new mongoose.Schema(

@@ -1,4 +1,4 @@
-import { PAYMENT_GATEWAY, TRANSACTION_STATUS, TRANSACTION_TYPE } from '../../constants/enums.js';
+import { PAYMENT_GATEWAY, TRANSACTION_STATUS, TRANSACTION_TYPE } from '../constants/enums.js';
 
 import mongoose from 'mongoose';
 

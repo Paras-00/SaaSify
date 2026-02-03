@@ -1,10 +1,11 @@
 import { errorResponse, successResponse } from '../../utils/response.js';
 
-import ActivityLog from '../models/ActivityLog.js';
-import Client from '../models/Client.js';
-import Domain from '../models/Domain.js';
-import Order from '../models/Order.js';
-import Transaction from '../models/Transaction.js';
+import ActivityLog from '../../models/ActivityLog.js';
+import Client from '../../models/Client.js';
+import Domain from '../../models/Domain.js';
+import Order from '../../models/Order.js';
+import Transaction from '../../models/Transaction.js';
+import { domainRegistrationQueue } from '../../queues/domain.queue.js';
 import godaddyService from '../../services/godaddy.service.js';
 import logger from '../../utils/logger.js';
 import mongoose from 'mongoose';
@@ -414,11 +415,13 @@ export const checkout = async (req, res) => {
       order[0].paidAt = new Date();
       await order[0].save({ session });
 
-      // Process domain registrations (add to queue in production)
+      // Process domain registrations - Create domain records and queue for registration
       const domainItems = cart.items.filter((item) => item.type === 'domain');
+      const domainJobs = [];
+
       for (const item of domainItems) {
         // Create domain record
-        await Domain.create(
+        const domain = await Domain.create(
           [
             {
               userId,
@@ -426,19 +429,120 @@ export const checkout = async (req, res) => {
               orderId: order[0]._id,
               domainName: item.metadata.domain || item.name,
               tld: item.metadata.tld,
-              registrationDate: new Date(),
-              expiryDate: new Date(Date.now() + item.period * 365 * 24 * 60 * 60 * 1000),
+              registeredAt: null, // Will be set by worker after successful registration
+              expiresAt: new Date(Date.now() + item.period * 365 * 24 * 60 * 60 * 1000),
               autoRenew: item.metadata.autoRenew !== false,
               privacyProtection: item.metadata.privacy !== false,
               status: 'pending',
               registrationPeriod: item.period,
               registrationPrice: item.price,
-              nameServers: item.metadata.nameServers || [],
+              renewalPrice: item.price,
+              nameservers: item.metadata.nameServers || [],
             },
           ],
           { session }
         );
+
+        // Prepare domain registration data for GoDaddy
+        const domainData = {
+          domain: domain[0].domainName,
+          period: item.period,
+          renewAuto: item.metadata.autoRenew !== false,
+          privacy: item.metadata.privacy !== false,
+          nameServers: item.metadata.nameServers || [],
+          contactRegistrant: domainContacts || {
+            firstName: client.firstName,
+            lastName: client.lastName,
+            email: client.email,
+            phone: client.phone || '+1.0000000000',
+            organization: client.companyName || '',
+            address: {
+              street: billingDetails?.address || '123 Main St',
+              city: billingDetails?.city || 'New York',
+              state: billingDetails?.state || 'NY',
+              country: billingDetails?.country || 'US',
+              zipCode: billingDetails?.zipCode || '10001',
+            },
+          },
+          consent: {
+            agreementKeys: ['DNRA'],
+            agreedBy: client.email,
+            agreedAt: new Date().toISOString(),
+          },
+        };
+
+        domainJobs.push({
+          domainId: domain[0]._id,
+          domainData,
+        });
       }
+
+      // Commit transaction before queuing jobs
+      await session.commitTransaction();
+
+      // Queue domain registration jobs (outside transaction)
+      for (const job of domainJobs) {
+        try {
+          await domainRegistrationQueue.add(
+            'register-domain',
+            {
+              orderId: order[0]._id,
+              domainId: job.domainId,
+              userId,
+              domainData: job.domainData,
+            },
+            {
+              priority: 1, // High priority for paid orders
+              attempts: 3,
+              backoff: {
+                type: 'exponential',
+                delay: 5000,
+              },
+            }
+          );
+
+          logger.info(`✅ Queued domain registration for ${job.domainData.domain}`);
+        } catch (queueError) {
+          logger.error(`Failed to queue domain registration:`, queueError);
+          // Mark domain as failed
+          await Domain.findByIdAndUpdate(job.domainId, {
+            status: 'failed',
+            notes: `Failed to queue for registration: ${queueError.message}`,
+          });
+        }
+      }
+
+      // Continue with activity log (move outside since transaction is committed)
+      await ActivityLog.create({
+        userId,
+        clientId: client._id,
+        action: 'order_create',
+        category: 'order',
+        description: `Created order ${orderNumber}`,
+        metadata: {
+          orderNumber,
+          total: cart.total,
+          itemsCount: cart.items.length,
+          paymentMethod,
+        },
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        status: 'success',
+      });
+
+      // Clear cart
+      cartStorage.delete(cartKey);
+
+      return successResponse(res, 'Order created successfully', {
+        order: {
+          id: order[0]._id,
+          orderNumber: order[0].orderNumber,
+          status: order[0].status,
+          total: order[0].totalAmount,
+          currency: order[0].currency,
+          createdAt: order[0].createdAt,
+        },
+      });
     }
 
     // Log activity

@@ -1,12 +1,12 @@
-import Client from '../modules/models/Client.js';
-import Domain from '../modules/models/Domain.js';
-import Invoice from '../modules/models/Invoice.js';
-import Order from '../modules/models/Order.js';
-import Product from '../modules/models/Product.js';
-import Server from '../modules/models/Server.js';
-import Service from '../modules/models/Service.js';
-import Transaction from '../modules/models/Transaction.js';
-import User from '../modules/models/User.js';
+import Client from '../models/Client.js';
+import Domain from '../models/Domain.js';
+import Invoice from '../models/Invoice.js';
+import Order from '../models/Order.js';
+import Product from '../models/Product.js';
+import Server from '../models/Server.js';
+import Service from '../models/Service.js';
+import Transaction from '../models/Transaction.js';
+import User from '../models/User.js';
 import logger from '../utils/logger.js';
 
 /**

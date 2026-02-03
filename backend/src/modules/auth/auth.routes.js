@@ -1,10 +1,10 @@
 import * as authController from './auth.controller.js';
 import * as authValidation from './auth.validation.js';
 
-import { authLimiterMiddleware as authLimiter } from '../../models/middleware/rateLimit.middleware.js';
-import { authenticateToken } from '../../models/middleware/auth.middleware.js';
+import { authLimiterMiddleware as authLimiter } from '../../middleware/rateLimit.middleware.js';
+import { authenticateToken } from '../../middleware/auth.middleware.js';
 import express from 'express';
-import { validate } from '../../models/middleware/validation.middleware.js';
+import { validate } from '../../middleware/validation.middleware.js';
 
 const router = express.Router();
 

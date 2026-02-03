@@ -1,10 +1,10 @@
 import { errorResponse, successResponse } from '../../utils/response.js';
 import { generateToken, hashPassword, verifyPassword } from '../../utils/encryption.js';
 
-import Client from '../models/Client.js';
+import Client from '../../models/Client.js';
 import { EMAIL_TEMPLATE } from '../../constants/enums.js';
 import QRCode from 'qrcode';
-import User from '../models/User.js';
+import User from '../../models/User.js';
 import jwt from 'jsonwebtoken';
 import logger from '../../utils/logger.js';
 import { sendEmail } from '../../services/email.service.js';

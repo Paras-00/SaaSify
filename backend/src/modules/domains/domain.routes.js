@@ -1,4 +1,4 @@
-import { authenticateToken, optionalAuth } from '../../models/middleware/auth.middleware.js';
+import { authenticateToken, optionalAuth } from '../../middleware/auth.middleware.js';
 import {
   checkAvailability,
   getDomainById,
@@ -23,7 +23,7 @@ import {
 } from './domain.validation.js';
 
 import express from 'express';
-import { validate } from '../../models/middleware/validation.middleware.js';
+import { validate } from '../../middleware/validation.middleware.js';
 
 const router = express.Router();
 

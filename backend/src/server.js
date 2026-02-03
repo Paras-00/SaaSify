@@ -6,7 +6,7 @@ dotenv.config({ path: `.env.${process.env.NODE_ENV || 'development'}` });
 import app from './app.js';
 import connectDB from './config/database.js';
 import { connectRedis } from './config/redis.js';
-import { initRateLimiters } from './models/middleware/rateLimit.middleware.js';
+import { initRateLimiters } from './middleware/rateLimit.middleware.js';
 import logger from './utils/logger.js';
 
 const PORT = process.env.PORT || 4000;

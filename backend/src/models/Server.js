@@ -1,4 +1,4 @@
-import { SERVER_TYPE } from '../../constants/enums.js';
+import { SERVER_TYPE } from '../constants/enums.js';
 import mongoose from 'mongoose';
 
 const serverSchema = new mongoose.Schema(

@@ -1,9 +1,9 @@
 import { BILLING_CYCLE, PRODUCT_TYPE, SERVER_TYPE, USER_ROLES } from '../constants/enums.js';
 
-import Client from '../modules/models/Client.js';
-import Product from '../modules/models/Product.js';
-import Server from '../modules/models/Server.js';
-import User from '../modules/models/User.js';
+import Client from '../models/Client.js';
+import Product from '../models/Product.js';
+import Server from '../models/Server.js';
+import User from '../models/User.js';
 import { hashPassword } from '../utils/encryption.js';
 import logger from '../utils/logger.js';
 

@@ -1,10 +1,10 @@
 import { errorResponse, successResponse } from '../../utils/response.js';
 
-import ActivityLog from '../models/ActivityLog.js';
-import Client from '../models/Client.js';
-import Order from '../models/Order.js';
-import Transaction from '../models/Transaction.js';
-import User from '../models/User.js';
+import ActivityLog from '../../models/ActivityLog.js';
+import Client from '../../models/Client.js';
+import Order from '../../models/Order.js';
+import Transaction from '../../models/Transaction.js';
+import User from '../../models/User.js';
 import logger from '../../utils/logger.js';
 
 /**

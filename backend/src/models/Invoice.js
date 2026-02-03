@@ -1,4 +1,4 @@
-import { INVOICE_STATUS } from '../../constants/enums.js';
+import { INVOICE_STATUS } from '../constants/enums.js';
 import mongoose from 'mongoose';
 
 const invoiceSchema = new mongoose.Schema(

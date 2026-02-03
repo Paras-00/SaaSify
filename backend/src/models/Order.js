@@ -1,4 +1,4 @@
-import { BILLING_CYCLE, ORDER_STATUS } from '../../constants/enums.js';
+import { BILLING_CYCLE, ORDER_STATUS } from '../constants/enums.js';
 
 import mongoose from 'mongoose';
 

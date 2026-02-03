@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+    .content { background: #fff; padding: 30px; border: 1px solid #e5e7eb; }
+    .payment-details { background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #86efac; }
+    .detail-row { display: flex; justify-content: space-between; margin: 10px 0; }
+    .amount { font-size: 32px; font-weight: bold; color: #10b981; text-align: center; margin: 20px 0; }
+    .button { display: inline-block; background: #667eea; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0; }
+    .footer { text-align: center; margin-top: 30px; color: #6b7280; font-size: 14px; }
+    .success-badge { background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; display: inline-block; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>✅ Payment Received</h1>
+      <p style="margin: 10px 0 0 0; font-size: 18px;">Thank you for your payment!</p>
+    </div>
+    
+    <div class="content">
+      <p>Hi {{clientName}},</p>
+      
+      <p>We've received your payment. Your invoice has been marked as <span class="success-badge">PAID</span></p>
+      
+      <div class="payment-details">
+        <div class="detail-row">
+          <strong>Invoice Number:</strong>
+          <span>{{invoiceNumber}}</span>
+        </div>
+        <div class="detail-row">
+          <strong>Payment Method:</strong>
+          <span>{{paymentMethod}}</span>
+        </div>
+        <div class="detail-row">
+          <strong>Transaction ID:</strong>
+          <span>{{transactionId}}</span>
+        </div>
+        <div class="detail-row">
+          <strong>Payment Date:</strong>
+          <span>{{paymentDate}}</span>
+        </div>
+      </div>
+      
+      <div class="amount">{{currency}} {{amount}}</div>
+      
+      <div style="text-align: center;">
+        <a href="{{viewInvoiceUrl}}" class="button">Download Receipt</a>
+      </div>
+      
+      <p style="margin-top: 30px;"><strong>What's Next?</strong></p>
+      <ul>
+        <li>Your services will continue without interruption</li>
+        <li>A receipt has been generated and attached to your account</li>
+        <li>You can view all transactions in your account dashboard</li>
+      </ul>
+      
+      <p style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+        <strong>💡 Tip:</strong> Set up auto-payment to never miss a due date! Visit your account settings to enable this feature.
+      </p>
+      
+      <p>Thank you for being a valued customer!</p>
+      
+      <p>Best regards,<br>The SaaSify Team</p>
+    </div>
+    
+    <div class="footer">
+      <p>SaaSify - Domain & Hosting Platform</p>
+      <p>Need help? Contact us at support@saasify.com</p>
+    </div>
+  </div>
+</body>
+</html>

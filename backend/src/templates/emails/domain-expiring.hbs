@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domain Expiring Soon</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Arial', sans-serif; background-color: #f4f4f4;">
+  <table cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f4f4; padding: 20px;">
+    <tr>
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 40px 30px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">⚠️ Domain Expiring Soon</h1>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px 30px;">
+              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
+                Hi {{name}},
+              </p>
+              
+              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
+                This is a reminder that your domain <strong style="color: #f5576c;">{{domain}}</strong> will expire in <strong>{{daysRemaining}} day(s)</strong>.
+              </p>
+              
+              <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin: 20px 0; border-radius: 4px;">
+                <p style="margin: 0 0 10px; color: #856404; font-size: 14px;"><strong>⚠️ Important:</strong></p>
+                <p style="margin: 5px 0; color: #856404;">
+                  If not renewed before <strong>{{expiresAt}}</strong>, your domain will become unavailable and you may lose it permanently.
+                </p>
+              </div>
+              
+              <p style="color: #666666; font-size: 14px; line-height: 1.6; margin: 20px 0;">
+                Renew your domain now to avoid any disruption to your website and email services.
+              </p>
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="{{renewalUrl}}" style="display: inline-block; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: #ffffff; text-decoration: none; padding: 14px 30px; border-radius: 6px; font-weight: bold;">
+                  Renew Domain Now
+                </a>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f8f9fa; padding: 20px 30px; text-align: center; border-top: 1px solid #e9ecef;">
+              <p style="color: #999999; font-size: 12px; margin: 0;">
+                This is an automated reminder. Please renew your domain to avoid service disruption.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

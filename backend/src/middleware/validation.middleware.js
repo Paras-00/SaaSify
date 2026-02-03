@@ -1,5 +1,5 @@
-import { errorResponse } from '../../utils/response.js';
-import logger from '../../utils/logger.js';
+import { errorResponse } from '../utils/response.js';
+import logger from '../utils/logger.js';
 
 /**
  * Joi validation middleware

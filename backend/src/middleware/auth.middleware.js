@@ -1,12 +1,12 @@
-import User from '../../modules/models/User.js';
-import { errorResponse } from '../../utils/response.js';
+import User from '../models/User.js';
+import { errorResponse } from '../utils/response.js';
 import jwt from 'jsonwebtoken';
-import logger from '../../utils/logger.js';
+import logger from '../utils/logger.js';
 
 // Token blacklist (in production, use Redis)
 let isTokenBlacklisted;
 try {
-  const authController = await import('../../modules/auth/auth.controller.js');
+  const authController = await import('../modules/auth/auth.controller.js');
   isTokenBlacklisted = authController.isTokenBlacklisted;
 } catch (error) {
   // Fallback if auth controller not loaded yet
