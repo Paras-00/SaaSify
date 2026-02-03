@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2FA Enabled</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">{{companyName}}</h1>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px 30px;">
+              <h2 style="color: #333333; margin: 0 0 20px 0; font-size: 24px;">Two-Factor Authentication Enabled</h2>
+              
+              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">Hi {{firstName}},</p>
+              
+              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
+                Two-factor authentication (2FA) has been successfully enabled on your account.
+              </p>
+              
+              <div style="background-color: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                <p style="color: #155724; margin: 0; font-size: 14px;">
+                  <strong>✓ Enhanced Security:</strong> Your account is now protected with an additional layer of security.
+                </p>
+              </div>
+              
+              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
+                From now on, you'll need to enter a 6-digit code from your authenticator app when logging in.
+              </p>
+              
+              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
+                <strong>Important:</strong> Make sure to keep your authenticator app backed up. If you lose access to it, you may be locked out of your account.
+              </p>
+              
+              <div style="background-color: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                <p style="color: #721c24; margin: 0; font-size: 14px;">
+                  <strong>Didn't enable 2FA?</strong> If you didn't enable two-factor authentication, please contact support immediately.
+                </p>
+              </div>
+              
+              <p style="color: #666666; line-height: 1.6; margin: 0;">
+                Best regards,<br>
+                The {{companyName}} Team
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f8f8f8; padding: 30px; text-align: center; border-top: 1px solid #eeeeee;">
+              <p style="color: #999999; font-size: 14px; margin: 0 0 10px 0;">
+                Need help? Contact us at <a href="mailto:{{supportEmail}}" style="color: #667eea; text-decoration: none;">{{supportEmail}}</a>
+              </p>
+              <p style="color: #999999; font-size: 12px; margin: 0;">
+                &copy; {{currentYear}} {{companyName}}. All rights reserved.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

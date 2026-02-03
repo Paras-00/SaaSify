@@ -1,0 +1,1079 @@
+{
+	"info": {
+		"_postman_id": "saasify-api-collection-2026",
+		"name": "SaaSify API Collection",
+		"description": "Complete API collection for SaaSify Hosting Platform Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "saasify-v1"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:4000",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Server Health",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["health"]
+						},
+						"description": "Check if server is running"
+					},
+					"response": []
+				},
+				{
+					"name": "API Info",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api",
+							"host": ["{{baseUrl}}"],
+							"path": ["api"]
+						},
+						"description": "Get API information and available endpoints"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.user) {",
+									"        pm.collectionVariables.set('userId', response.data.user.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePassword123!\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phone\": \"+1234567890\",\n  \"company\": \"Tech Corp\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "register"]
+						},
+						"description": "Register a new user account"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Email",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\",\n  \"code\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/verify-email",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "verify-email"]
+						},
+						"description": "Verify email address with OTP code"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data) {",
+									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+									"        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+									"        if (response.data.user) {",
+									"            pm.collectionVariables.set('userId', response.data.user.id);",
+									"        }",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login with email and password"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "logout"]
+						},
+						"description": "Logout current user"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.accessToken) {",
+									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/refresh-token",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "refresh-token"]
+						},
+						"description": "Refresh access token using refresh token"
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/forgot-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "forgot-password"]
+						},
+						"description": "Request password reset email"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\": \"reset_token_here\",\n  \"password\": \"NewSecurePassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/reset-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "reset-password"]
+						},
+						"description": "Reset password with token from email"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currentPassword\": \"OldPassword123!\",\n  \"newPassword\": \"NewSecurePassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/change-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "change-password"]
+						},
+						"description": "Change password for authenticated user"
+					},
+					"response": []
+				},
+				{
+					"name": "Enable 2FA",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/enable-2fa",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "enable-2fa"]
+						},
+						"description": "Generate 2FA QR code and secret"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify 2FA",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/verify-2fa",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "verify-2fa"]
+						},
+						"description": "Verify and activate 2FA with token"
+					},
+					"response": []
+				},
+				{
+					"name": "Disable 2FA",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/disable-2fa",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "disable-2fa"]
+						},
+						"description": "Disable 2FA with verification token"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Client Profile",
+			"item": [
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clients/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clients", "me"]
+						},
+						"description": "Get current client profile"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phone\": \"+1234567890\",\n  \"company\": \"Tech Corp\",\n  \"address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"zipCode\": \"10001\",\n    \"country\": \"USA\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clients/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clients", "me"]
+						},
+						"description": "Update client profile information"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Wallet",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clients/me/wallet",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clients", "me", "wallet"]
+						},
+						"description": "Get wallet balance and recent transactions"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Wallet Credit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 100.00,\n  \"paymentMethod\": \"stripe\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clients/me/wallet/add",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clients", "me", "wallet", "add"]
+						},
+						"description": "Add funds to wallet"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Activity Logs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clients/me/activity?page=1&limit=20&action=login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clients", "me", "activity"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "action",
+									"value": "login",
+									"description": "Filter by action type"
+								}
+							]
+						},
+						"description": "Get user activity logs with filters"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Domains",
+			"item": [
+				{
+					"name": "Search Domains",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/domains/search?q=example&tlds=com,net,org&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "domains", "search"],
+							"query": [
+								{
+									"key": "q",
+									"value": "example",
+									"description": "Domain name to search"
+								},
+								{
+									"key": "tlds",
+									"value": "com,net,org",
+									"description": "Comma-separated TLDs"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Search for available domains"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Availability",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/domains/availability/example.com",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "domains", "availability", "example.com"]
+						},
+						"description": "Check if specific domain is available"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Domain Suggestions",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/domains/suggestions?keyword=tech&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "domains", "suggestions"],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "tech"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get domain name suggestions"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Domain Pricing",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/domains/pricing/com",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "domains", "pricing", "com"]
+						},
+						"description": "Get pricing for specific TLD"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Supported TLDs",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/domains/tlds",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "domains", "tlds"]
+						},
+						"description": "Get list of all supported TLDs with pricing"
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Domains",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/domains/my-domains",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "domains", "my-domains"]
+						},
+						"description": "Get user's registered domains"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Domain By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/domains/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "domains", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "domain_id_here"
+								}
+							]
+						},
+						"description": "Get domain details by ID"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Shopping Cart",
+			"item": [
+				{
+					"name": "Get Cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cart",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cart"]
+						},
+						"description": "Get current user's shopping cart"
+					},
+					"response": []
+				},
+				{
+					"name": "Add to Cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productType\": \"domain\",\n  \"productId\": \"product_id_here\",\n  \"domainName\": \"example.com\",\n  \"period\": 1,\n  \"price\": 12.99,\n  \"addons\": [\n    {\n      \"type\": \"privacy\",\n      \"price\": 5.00\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cart/add",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cart", "add"]
+						},
+						"description": "Add item to cart"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cart Item",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"period\": 2,\n  \"addons\": [\n    {\n      \"type\": \"privacy\",\n      \"price\": 5.00\n    },\n    {\n      \"type\": \"ssl\",\n      \"price\": 10.00\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cart/:itemId",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cart", ":itemId"],
+							"variable": [
+								{
+									"key": "itemId",
+									"value": "cart_item_id"
+								}
+							]
+						},
+						"description": "Update cart item details"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove from Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cart/:itemId",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cart", ":itemId"],
+							"variable": [
+								{
+									"key": "itemId",
+									"value": "cart_item_id"
+								}
+							]
+						},
+						"description": "Remove item from cart"
+					},
+					"response": []
+				},
+				{
+					"name": "Clear Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cart/clear",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cart", "clear"]
+						},
+						"description": "Clear entire cart"
+					},
+					"response": []
+				},
+				{
+					"name": "Apply Coupon",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"SAVE20\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cart/coupon",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cart", "coupon"]
+						},
+						"description": "Apply coupon code to cart"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Coupon",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cart/coupon",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cart", "coupon"]
+						},
+						"description": "Remove applied coupon"
+					},
+					"response": []
+				},
+				{
+					"name": "Checkout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"paymentMethod\": \"wallet\",\n  \"billingAddress\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"zipCode\": \"10001\",\n    \"country\": \"USA\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cart/checkout",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cart", "checkout"]
+						},
+						"description": "Checkout and create order"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "User Management",
+					"item": [
+						{
+							"name": "Get All Users",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/users?page=1&limit=20&role=client&status=active&search=john",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "users"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										},
+										{
+											"key": "role",
+											"value": "client",
+											"description": "Filter by role: client, admin"
+										},
+										{
+											"key": "status",
+											"value": "active",
+											"description": "Filter by status: active, suspended"
+										},
+										{
+											"key": "search",
+											"value": "john",
+											"description": "Search by name or email"
+										}
+									]
+								},
+								"description": "Get all users with filters and pagination"
+							},
+							"response": []
+						},
+						{
+							"name": "Get User By ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/users/:id",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "users", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "user_id_here"
+										}
+									]
+								},
+								"description": "Get user details by ID"
+							},
+							"response": []
+						},
+						{
+							"name": "Update User",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"newemail@example.com\",\n  \"role\": \"client\",\n  \"status\": \"active\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/users/:id",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "users", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "user_id_here"
+										}
+									]
+								},
+								"description": "Update user by ID"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/users/:id",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "users", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "user_id_here"
+										}
+									]
+								},
+								"description": "Soft delete user by ID"
+							},
+							"response": []
+						},
+						{
+							"name": "Suspend User",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"reason\": \"Violation of terms of service\",\n  \"duration\": 30\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/users/:id/suspend",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "users", ":id", "suspend"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "user_id_here"
+										}
+									]
+								},
+								"description": "Suspend user account"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Client Management",
+					"item": [
+						{
+							"name": "Add Client Credit",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"amount\": 100.00,\n  \"reason\": \"Promotional credit\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/clients/:id/credit",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "clients", ":id", "credit"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "client_id_here"
+										}
+									]
+								},
+								"description": "Add wallet credit to client account"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Audit Logs",
+					"item": [
+						{
+							"name": "Get Audit Logs",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/audit-logs?page=1&limit=50&userId=user_id&action=login&startDate=2026-01-01&endDate=2026-02-03",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "audit-logs"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "50"
+										},
+										{
+											"key": "userId",
+											"value": "user_id",
+											"description": "Filter by user ID"
+										},
+										{
+											"key": "action",
+											"value": "login",
+											"description": "Filter by action type"
+										},
+										{
+											"key": "startDate",
+											"value": "2026-01-01",
+											"description": "Start date (YYYY-MM-DD)"
+										},
+										{
+											"key": "endDate",
+											"value": "2026-02-03",
+											"description": "End date (YYYY-MM-DD)"
+										}
+									]
+								},
+								"description": "Get audit logs with filters"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Dashboard Stats",
+					"item": [
+						{
+							"name": "Get Dashboard Statistics",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/stats?period=month&startDate=2026-01-01&endDate=2026-02-03",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "stats"],
+									"query": [
+										{
+											"key": "period",
+											"value": "month",
+											"description": "day, week, month, year"
+										},
+										{
+											"key": "startDate",
+											"value": "2026-01-01"
+										},
+										{
+											"key": "endDate",
+											"value": "2026-02-03"
+										}
+									]
+								},
+								"description": "Get dashboard statistics and analytics"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

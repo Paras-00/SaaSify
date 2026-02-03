@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2FA Disabled</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">{{companyName}}</h1>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px 30px;">
+              <h2 style="color: #333333; margin: 0 0 20px 0; font-size: 24px;">Two-Factor Authentication Disabled</h2>
+              
+              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">Hi {{firstName}},</p>
+              
+              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
+                Two-factor authentication (2FA) has been disabled on your account.
+              </p>
+              
+              <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                <p style="color: #856404; margin: 0; font-size: 14px;">
+                  <strong>Security Notice:</strong> Your account is now less secure without 2FA protection. We recommend enabling it again for enhanced security.
+                </p>
+              </div>
+              
+              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
+                You can re-enable two-factor authentication anytime from your account security settings.
+              </p>
+              
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
+                <tr>
+                  <td align="center">
+                    <a href="{{frontendUrl}}/settings/security" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Go to Security Settings</a>
+                  </td>
+                </tr>
+              </table>
+              
+              <div style="background-color: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                <p style="color: #721c24; margin: 0; font-size: 14px;">
+                  <strong>Didn't disable 2FA?</strong> If you didn't disable two-factor authentication, please contact support immediately and change your password.
+                </p>
+              </div>
+              
+              <p style="color: #666666; line-height: 1.6; margin: 0;">
+                Best regards,<br>
+                The {{companyName}} Team
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f8f8f8; padding: 30px; text-align: center; border-top: 1px solid #eeeeee;">
+              <p style="color: #999999; font-size: 14px; margin: 0 0 10px 0;">
+                Need help? Contact us at <a href="mailto:{{supportEmail}}" style="color: #667eea; text-decoration: none;">{{supportEmail}}</a>
+              </p>
+              <p style="color: #999999; font-size: 12px; margin: 0;">
+                &copy; {{currentYear}} {{companyName}}. All rights reserved.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
