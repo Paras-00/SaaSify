@@ -42,6 +42,7 @@ export default function DomainDetails() {
 
   useEffect(() => {
     fetchDomainDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchDomainDetails = async () => {
@@ -147,7 +148,7 @@ export default function DomainDetails() {
           <ArrowLeftIcon className="h-5 w-5 mr-2" />
           Back to Domains
         </button>
-        
+
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center">
             <GlobeAltIcon className="h-10 w-10 text-blue-600 mr-4" />
@@ -156,7 +157,7 @@ export default function DomainDetails() {
               <p className="text-gray-500 mt-1">{domain.registrar || 'Managed Domain'}</p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <span className={`flex items-center px-4 py-2 rounded-full text-sm font-semibold border ${statusColors[domain.status] || statusColors.pending}`}>
               <StatusIcon className="h-4 w-4 mr-2" />

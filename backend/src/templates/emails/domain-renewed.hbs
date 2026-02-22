@@ -1,53 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Domain Renewed Successfully</title>
+  <title>Domain Renewed – {{companyName}}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body style="margin: 0; padding: 0; font-family: 'Arial', sans-serif; background-color: #f4f4f4;">
-  <table cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f4f4; padding: 20px;">
+
+<body
+  style="margin:0;padding:0;background-color:#EAECEF;font-family:'Inter',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#EAECEF;padding:40px 20px;">
     <tr>
       <td align="center">
-        <table cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-          <!-- Header -->
+        <table width="600" cellpadding="0" cellspacing="0"
+          style="background-color:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.05);">
           <tr>
-            <td style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); padding: 40px 30px; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">✅ Domain Renewed Successfully</h1>
+            <td style="background-color:#087d51;padding:48px 40px;text-align:center;">
+              <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                <tr>
+                  <td
+                    style="background-color:rgba(255,255,255,0.2);border-radius:12px;width:44px;height:44px;text-align:center;vertical-align:middle;">
+                    <span style="color:#ffffff;font-weight:700;font-size:24px;line-height:44px;">S</span>
+                  </td>
+                  <td style="padding-left:14px;">
+                    <span
+                      style="color:#ffffff;font-size:26px;font-weight:700;letter-spacing:-0.5px;">{{companyName}}</span>
+                  </td>
+                </tr>
+              </table>
+              <div style="margin-top:20px;color:rgba(255,255,255,0.9);font-size:16px;">Domain Successfully Renewed</div>
             </td>
           </tr>
-          
-          <!-- Content -->
           <tr>
-            <td style="padding: 40px 30px;">
-              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
-                Hi {{name}},
-              </p>
-              
-              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
-                Your domain <strong style="color: #11998e;">{{domain}}</strong> has been successfully renewed for {{period}} year(s).
-              </p>
-              
-              <div style="background-color: #d1ecf1; border-left: 4px solid #11998e; padding: 20px; margin: 20px 0; border-radius: 4px;">
-                <p style="margin: 0 0 10px; color: #0c5460; font-size: 14px;">Renewal Details:</p>
-                <p style="margin: 5px 0; color: #0c5460;"><strong>Domain:</strong> {{domain}}</p>
-                <p style="margin: 5px 0; color: #0c5460;"><strong>Period:</strong> {{period}} year(s)</p>
-                <p style="margin: 5px 0; color: #0c5460;"><strong>New Expiry:</strong> {{newExpiry}}</p>
-                <p style="margin: 5px 0; color: #0c5460;"><strong>Amount:</strong> ${{amount}} USD</p>
+            <td style="padding:56px 48px;background-color:#ffffff;">
+              <h2
+                style="color:#111827;margin:0 0 16px 0;font-size:28px;font-weight:700;letter-spacing:-0.8px;line-height:1.2;">
+                Renewal Complete! ✨</h2>
+              <p style="color:#4B5563;font-size:16px;line-height:1.7;margin:0 0 32px 0;">Hi <strong
+                  style="color:#111827;">{{firstName}}</strong>, your domain <strong>{{domain}}</strong> has been
+                successfully renewed.</p>
+              <div
+                style="background-color:#F8FAFC;border:1px solid #E2E8F0;border-radius:20px;padding:32px;margin-bottom:32px;">
+                <div
+                  style="color:#64748B;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">
+                  New Expiry Date</div>
+                <div style="color:#087d51;font-size:24px;font-weight:800;">{{expiryDate}}</div>
               </div>
-              
-              <p style="color: #666666; font-size: 14px; line-height: 1.6; margin: 20px 0;">
-                Your domain services will continue without interruption. Thank you for staying with us!
-              </p>
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px 0;">
+                <tr>
+                  <td align="center">
+                    <a href="{{frontendUrl}}/dashboard/domains"
+                      style="background-color:#087d51;color:#ffffff;text-decoration:none;padding:18px 48px;border-radius:12px;font-weight:600;font-size:16px;display:inline-block;box-shadow:0 8px 20px rgba(8,125,81,0.25);">Manage
+                      Domains</a>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
-          
-          <!-- Footer -->
           <tr>
-            <td style="background-color: #f8f9fa; padding: 20px 30px; text-align: center; border-top: 1px solid #e9ecef;">
-              <p style="color: #999999; font-size: 12px; margin: 0;">
-                This is an automated confirmation. Thank you for your business!
-              </p>
+            <td style="background-color:#087d51;padding:48px 40px;text-align:center;">
+              <p style="color:rgba(255,255,255,0.7);font-size:14px;margin:0 0 20px 0;line-height:1.6;">Thank you for
+                your continued trust in SaaSify infrastructure.</p>
+              <div style="height:1px;background-color:rgba(255,255,255,0.1);margin:0 auto 24px auto;"></div>
+              <p style="color:rgba(255,255,255,0.9);font-size:14px;margin:0 0 8px 0;">&copy; {{currentYear}}
+                {{companyName}}. All rights reserved.</p>
             </td>
           </tr>
         </table>
@@ -55,4 +72,5 @@
     </tr>
   </table>
 </body>
+
 </html>

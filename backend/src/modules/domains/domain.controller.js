@@ -17,7 +17,7 @@ export const searchDomains = async (req, res) => {
 
     // Validate domain format
     const validation = godaddyService.validateDomainFormat(query);
-    
+
     let results = [];
 
     if (validation.isValid && validation.tld) {
@@ -47,7 +47,7 @@ export const searchDomains = async (req, res) => {
       });
 
       // Check availability for suggestions if requested
-      if (checkAvailability === 'true' && suggestions.length > 0) {
+      if (checkAvailability === true && suggestions.length > 0) {
         const domains = suggestions.map((s) => s.domain);
         const availabilityResults = await godaddyService.checkBulkAvailability(
           domains.slice(0, 10)

@@ -1,76 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to {{companyName}}</title>
+  <title>Welcome to {{companyName}}!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px;">
+
+<body
+  style="margin:0;padding:0;background-color:#EAECEF;font-family:'Inter',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#EAECEF;padding:40px 20px;">
     <tr>
       <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-          <!-- Header -->
+        <!-- Main Card Container -->
+        <table width="600" cellpadding="0" cellspacing="0"
+          style="background-color:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.05);">
+
+          <!-- Premium Header -->
           <tr>
-            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Welcome to {{companyName}}!</h1>
-            </td>
-          </tr>
-          
-          <!-- Content -->
-          <tr>
-            <td style="padding: 40px 30px;">
-              <h2 style="color: #333333; margin: 0 0 20px 0; font-size: 24px;">Hi {{firstName}},</h2>
-              
-              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
-                Welcome aboard! We're thrilled to have you as part of the {{companyName}} community.
-              </p>
-              
-              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
-                Your account is now fully activated and you can start exploring our services:
-              </p>
-              
-              <ul style="color: #666666; line-height: 1.8; margin: 0 0 20px 0; padding-left: 20px;">
-                <li>Register and manage domains</li>
-                <li>Purchase hosting plans</li>
-                <li>Access your control panel</li>
-                <li>Manage billing and invoices</li>
-                <li>24/7 customer support</li>
-              </ul>
-              
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
+            <td style="background-color:#087d51;padding:56px 40px;text-align:center;">
+              <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
                 <tr>
-                  <td align="center">
-                    <a href="{{frontendUrl}}/dashboard" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 14px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Go to Dashboard</a>
+                  <td
+                    style="background-color:rgba(255,255,255,0.2);border-radius:12px;width:44px;height:44px;text-align:center;vertical-align:middle;">
+                    <span style="color:#ffffff;font-weight:700;font-size:24px;line-height:44px;">S</span>
+                  </td>
+                  <td style="padding-left:14px;">
+                    <span
+                      style="color:#ffffff;font-size:26px;font-weight:700;letter-spacing:-0.5px;">{{companyName}}</span>
                   </td>
                 </tr>
               </table>
-              
-              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
-                If you have any questions or need assistance, our support team is always here to help.
-              </p>
-              
-              <p style="color: #666666; line-height: 1.6; margin: 0;">
-                Best regards,<br>
-                The {{companyName}} Team
-              </p>
+              <h1 style="color:#ffffff;margin:24px 0 0 0;font-size:32px;font-weight:700;letter-spacing:-1px;">Welcome
+                aboard! 🎉</h1>
             </td>
           </tr>
-          
-          <!-- Footer -->
+
+          <!-- Content Body -->
           <tr>
-            <td style="background-color: #f8f8f8; padding: 30px; text-align: center; border-top: 1px solid #eeeeee;">
-              <p style="color: #999999; font-size: 14px; margin: 0 0 10px 0;">
-                Need help? Contact us at <a href="mailto:{{supportEmail}}" style="color: #667eea; text-decoration: none;">{{supportEmail}}</a>
+            <td style="padding:56px 48px;background-color:#ffffff;">
+              <p style="color:#4B5563;font-size:16px;line-height:1.7;margin:0 0 24px 0;">Hi <strong
+                  style="color:#111827;">{{firstName}}</strong>,</p>
+              <p style="color:#4B5563;font-size:16px;line-height:1.7;margin:0 0 40px 0;">
+                Your account is verified and ready to go. You can now manage your hosting, domains, and team members all
+                from your new dashboard.
               </p>
-              <p style="color: #999999; font-size: 12px; margin: 0;">
-                &copy; {{currentYear}} {{companyName}}. All rights reserved.
+
+              <!-- Features Grid (Simplified for Email) -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 48px 0;">
+                <tr>
+                  <td style="background-color:#F8FAFC;border-radius:20px;padding:32px;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding-bottom:20px;">
+                          <div style="color:#087d51;font-weight:700;font-size:16px;margin-bottom:4px;">🌐 Any TLD Domain
+                            Registry</div>
+                          <div style="color:#64748B;font-size:14px;">Search and register from hundreds of global
+                            extensions.</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding-bottom:20px;">
+                          <div style="color:#087d51;font-weight:700;font-size:16px;margin-bottom:4px;">🚀 High
+                            Performance VPS</div>
+                          <div style="color:#64748B;font-size:14px;">Deploy scalable infrastructure in seconds.</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div style="color:#087d51;font-weight:700;font-size:16px;margin-bottom:4px;">🛡️ Enterprise
+                            Security</div>
+                          <div style="color:#64748B;font-size:14px;">Built-in DDoS protection and encrypted 2FA.</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Central CTA -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px 0;">
+                <tr>
+                  <td align="center">
+                    <a href="{{frontendUrl}}/dashboard"
+                      style="background-color:#087d51;color:#ffffff;text-decoration:none;padding:18px 48px;border-radius:12px;font-weight:600;font-size:16px;display:inline-block;box-shadow:0 8px 20px rgba(8,125,81,0.25);">Explore
+                      Dashboard →</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Landing Page Style Green Footer -->
+          <tr>
+            <td style="background-color:#087d51;padding:48px 40px;text-align:center;">
+              <p style="color:rgba(255,255,255,0.7);font-size:14px;margin:0 0 20px 0;line-height:1.6;">
+                Empowering teams to ship faster. The complete platform for digital engineering.
               </p>
+              <div style="height:1px;background-color:rgba(255,255,255,0.1);margin:0 auto 24px auto;"></div>
+              <p style="color:rgba(255,255,255,0.9);font-size:14px;margin:0 0 8px 0;">
+                Questions? <a href="mailto:{{supportEmail}}"
+                  style="color:#ffffff;text-decoration:underline;font-weight:600;">Contact Support</a>
+              </p>
+              <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:0;">&copy; {{currentYear}} {{companyName}}.
+                All rights reserved.</p>
             </td>
           </tr>
         </table>
+
+        <p style="color:#94A3B8;font-size:12px;margin-top:24px;text-align:center;">
+          SaaSify Platform Labs &bull; San Francisco, CA
+        </p>
       </td>
     </tr>
   </table>
 </body>
+
 </html>

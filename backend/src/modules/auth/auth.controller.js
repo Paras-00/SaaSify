@@ -40,7 +40,7 @@ export const register = async (req, res) => {
       emailVerificationToken,
       role: 'client',
     });
-    
+
     // console.log(`Verification link is : ${process.env.FRONTEND_URL}/verify-email?token=${emailVerificationToken}`)
 
     // Create client profile
@@ -61,14 +61,21 @@ export const register = async (req, res) => {
         firstName,
         verificationLink: `${process.env.FRONTEND_URL}/verify-email?token=${emailVerificationToken}`,
       },
-      
+
     });
-    
+
+    // Generate accessToken for immediate login to setup 2FA
+    const accessToken = jwt.sign(
+      { userId: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '15m' }
+    );
+
 
     logger.info(`New user registered: ${email}`);
 
     return successResponse(res, {
-      message: 'Registration successful. Please check your email to verify your account.',
+      accessToken, // Return token for immediate 2FA setup
       user: {
         id: user._id,
         email: user.email,
@@ -81,7 +88,7 @@ export const register = async (req, res) => {
         lastName: client.lastName,
         fullName: client.fullName,
       },
-    }, 201);
+    }, 'Registration successful. Please check your email to verify your account.', 201);
   } catch (error) {
     logger.error('Registration error:', error);
     return errorResponse(res, 'Registration failed', 500);
@@ -110,6 +117,34 @@ export const verifyEmail = async (req, res) => {
     user.emailVerificationToken = undefined;
     await user.save();
 
+    // Generate tokens
+    const accessToken = jwt.sign(
+      { userId: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '15m' }
+    );
+
+    const refreshToken = jwt.sign(
+      { userId: user._id, email: user.email, role: user.role },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
+    );
+
+    // Set HTTP-only cookie
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
     // Get client info
     const client = await Client.findOne({ userId: user._id });
 
@@ -126,6 +161,20 @@ export const verifyEmail = async (req, res) => {
 
     return successResponse(res, {
       message: 'Email verified successfully. You can now login.',
+      accessToken,
+      refreshToken,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        emailVerified: user.emailVerified,
+      },
+      client: client ? {
+        id: client._id,
+        firstName: client.firstName,
+        lastName: client.lastName,
+        fullName: client.fullName,
+      } : null,
     });
   } catch (error) {
     logger.error('Email verification error:', error);
@@ -169,9 +218,7 @@ export const login = async (req, res) => {
       if (user.loginAttempts >= 5) {
         user.lockUntil = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
         await user.save();
-        
         logger.warn(`Account locked due to failed login attempts: ${email}`);
-        
         return errorResponse(
           res,
           'Too many failed login attempts. Account locked for 30 minutes.',
@@ -188,26 +235,71 @@ export const login = async (req, res) => {
       return errorResponse(res, 'Please verify your email before logging in', 403);
     }
 
-    // Check 2FA
-    if (user.twoFAEnabled) {
-      if (!twoFACode) {
-        return successResponse(res, {
-          require2FA: true,
-          message: 'Please provide 2FA code',
-        });
-      }
+    // Two-Step Verification (Email Code)
+    // Generate 6-digit random code
+    const login2FACode = Math.floor(100000 + Math.random() * 900000).toString();
+    const login2FAExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-      const isValid = speakeasy.totp.verify({
-        secret: user.twoFASecret,
-        encoding: 'base32',
-        token: twoFACode,
-        window: 2,
-      });
+    user.login2FACode = login2FACode;
+    user.login2FAExpires = login2FAExpires;
+    await user.save();
 
-      if (!isValid) {
-        return errorResponse(res, 'Invalid 2FA code', 401);
-      }
+    // Get client info for personalization
+    const client = await Client.findOne({ userId: user._id });
+
+    // Send 2FA email
+    await sendEmail({
+      to: user.email,
+      template: EMAIL_TEMPLATE.LOGIN_2FA,
+      data: {
+        firstName: client?.firstName || 'User',
+        code: login2FACode,
+      },
+    });
+
+    logger.info(`Login 2FA code sent to: ${email}`);
+
+    return successResponse(res, {
+      require2FA: true,
+      email: user.email,
+      message: 'A verification code has been sent to your email.',
+    });
+  } catch (error) {
+    logger.error('Login error:', error);
+    return errorResponse(res, 'Login failed', 500);
+  }
+};
+
+/**
+ * Verify Login 2FA
+ * POST /api/auth/verify-login-2fa
+ */
+export const verifyLogin2FA = async (req, res) => {
+  try {
+    const { email, code } = req.body;
+
+    if (!email || !code) {
+      return errorResponse(res, 'Email and verification code are required', 400);
     }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return errorResponse(res, 'Invalid credentials', 400);
+    }
+
+    // Check if code matches and is not expired
+    if (!user.login2FACode || user.login2FACode !== code) {
+      return errorResponse(res, 'Invalid verification code', 400);
+    }
+
+    if (new Date() > user.login2FAExpires) {
+      return errorResponse(res, 'Verification code has expired', 400);
+    }
+
+    // Reset 2FA code
+    user.login2FACode = undefined;
+    user.login2FAExpires = undefined;
 
     // Reset login attempts
     user.loginAttempts = 0;
@@ -246,7 +338,7 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    logger.info(`User logged in: ${email}`);
+    logger.info(`User logged in via 2FA: ${email}`);
 
     return successResponse(res, {
       message: 'Login successful',
@@ -269,8 +361,8 @@ export const login = async (req, res) => {
       } : null,
     });
   } catch (error) {
-    logger.error('Login error:', error);
-    return errorResponse(res, 'Login failed', 500);
+    logger.error('2FA verification error:', error);
+    return errorResponse(res, 'Verification failed', 500);
   }
 };
 
@@ -310,7 +402,7 @@ export const refreshToken = async (req, res) => {
   try {
     const { refreshToken: token } = req.body || {};
     const cookieToken = req.cookies.refreshToken;
-    
+
     const refreshTokenToUse = token || cookieToken;
 
     if (!refreshTokenToUse) {
@@ -350,7 +442,7 @@ export const refreshToken = async (req, res) => {
     if (error.name === 'TokenExpiredError') {
       return errorResponse(res, 'Refresh token expired. Please login again.', 401);
     }
-    
+
     logger.error('Token refresh error:', error);
     return errorResponse(res, 'Token refresh failed', 401);
   }

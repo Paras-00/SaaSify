@@ -22,7 +22,7 @@ export default function Profile() {
   const { user, updateUser } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
-  
+
   // Profile form state
   const [profileForm, setProfileForm] = useState({
     firstName: '',
@@ -100,7 +100,7 @@ export default function Profile() {
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       setLoading(true);
       const response = await authService.updateProfile(profileForm);
@@ -134,7 +134,7 @@ export default function Profile() {
         currentPassword: passwordForm.currentPassword,
         newPassword: passwordForm.newPassword,
       });
-      
+
       toast.success('Password changed successfully!');
       setPasswordForm({
         currentPassword: '',
@@ -159,25 +159,33 @@ export default function Profile() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto font-sans">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
-        <p className="text-gray-600 mt-2">Manage your account information and preferences</p>
+        <h1 className="text-3xl font-serif font-medium text-brand-text-primary">Profile Settings</h1>
+        <p className="text-brand-text-secondary mt-1">Manage your account information and preferences</p>
       </div>
 
       {/* Account Info Card */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl shadow-lg p-6 mb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-            <User size={32} />
+      <div className="bg-brand-dark border border-gray-300 rounded-3xl p-8 mb-8 relative overflow-hidden">
+        {/* Background Decorations removed */}
+
+        <div className="flex items-center gap-6 relative z-10">
+          <div className="w-20 h-20 rounded-2xl bg-brand-green/10 flex items-center justify-center border border-brand-green/20">
+            <span className="text-2xl font-serif font-bold text-brand-green">
+              {user?.firstName?.[0]}{user?.lastName?.[0]}
+            </span>
           </div>
+
           <div>
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-2xl font-serif font-medium text-brand-text-primary mb-1">
               {user?.firstName} {user?.lastName}
             </h2>
-            <p className="text-purple-100">{user?.email}</p>
-            <div className="flex items-center gap-2 mt-2 text-sm">
-              <Calendar size={16} />
+            <p className="text-brand-text-secondary flex items-center gap-2 text-sm mb-3">
+              <Mail size={14} />
+              {user?.email}
+            </p>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gray/10 border border-gray-300 text-xs text-brand-text-secondary">
+              <Calendar size={12} />
               <span>Member since {formatDate(user?.createdAt)}</span>
             </div>
           </div>
@@ -185,118 +193,123 @@ export default function Profile() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="flex border-b">
+      <div className="bg-brand-dark border border-gray-300 rounded-2xl overflow-hidden mb-8">
+        <div className="flex border-b border-brand-gray/20">
           <button
             onClick={() => setActiveTab('profile')}
-            className={`flex-1 px-6 py-4 font-medium transition-colors ${
-              activeTab === 'profile'
-                ? 'text-purple-600 border-b-2 border-purple-600'
-                : 'text-gray-600 hover:text-purple-600'
-            }`}
+            className={`flex-1 px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all ${activeTab === 'profile'
+              ? 'text-brand-green border-b-2 border-brand-green bg-brand-gray/10'
+              : 'text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-gray/10'
+              }`}
           >
             Profile Information
           </button>
           <button
             onClick={() => setActiveTab('password')}
-            className={`flex-1 px-6 py-4 font-medium transition-colors ${
-              activeTab === 'password'
-                ? 'text-purple-600 border-b-2 border-purple-600'
-                : 'text-gray-600 hover:text-purple-600'
-            }`}
+            className={`flex-1 px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all ${activeTab === 'password'
+              ? 'text-brand-green border-b-2 border-brand-green bg-brand-gray/10'
+              : 'text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-gray/10'
+              }`}
           >
             Change Password
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-8">
           {/* Profile Form */}
           {activeTab === 'profile' && (
-            <form onSubmit={handleProfileSubmit} className="space-y-6">
+            <form onSubmit={handleProfileSubmit} className="space-y-8">
               {/* Personal Information */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 className="text-lg font-serif text-brand-text-primary mb-6 flex items-center gap-2">
+                  <User size={20} className="text-brand-green" />
+                  Personal Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                       First Name
                     </label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <div className="relative group">
+                      <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 group-focus-within:text-brand-green transition-colors" size={18} />
                       <input
                         type="text"
                         name="firstName"
                         value={profileForm.firstName}
                         onChange={handleProfileChange}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="John"
+                        className="w-full pl-11 pr-4 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-light"
                         required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                       Last Name
                     </label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <div className="relative group">
+                      <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 group-focus-within:text-brand-green transition-colors" size={18} />
                       <input
                         type="text"
                         name="lastName"
                         value={profileForm.lastName}
                         onChange={handleProfileChange}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Doe"
+                        className="w-full pl-11 pr-4 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-light"
                         required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                       Email Address
                     </label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
                       <input
                         type="email"
                         name="email"
                         value={profileForm.email}
                         onChange={handleProfileChange}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                        className="w-full pl-11 pr-4 py-3 bg-brand-gray/5 border border-gray-300 rounded-xl text-brand-text-secondary/50 cursor-not-allowed font-light"
                         disabled
                       />
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                    <p className="text-[10px] text-brand-text-secondary mt-1.5 ml-1">Email cannot be changed.</p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                       Phone Number
                     </label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <div className="relative group">
+                      <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 group-focus-within:text-brand-green transition-colors" size={18} />
                       <input
                         type="tel"
                         name="phone"
                         value={profileForm.phone}
                         onChange={handleProfileChange}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="+1 234 567 8900"
+                        className="w-full pl-11 pr-4 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-light"
                       />
                     </div>
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                       Company (Optional)
                     </label>
-                    <div className="relative">
-                      <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <div className="relative group">
+                      <Building className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 group-focus-within:text-brand-green transition-colors" size={18} />
                       <input
                         type="text"
                         name="company"
                         value={profileForm.company}
                         onChange={handleProfileChange}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Company Name"
+                        className="w-full pl-11 pr-4 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-light"
                       />
                     </div>
                   </div>
@@ -305,26 +318,30 @@ export default function Profile() {
 
               {/* Address Information */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Address Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 className="text-lg font-serif text-brand-text-primary mb-6 flex items-center gap-2 pt-6 border-t border-brand-gray/20">
+                  <MapPin size={20} className="text-brand-green" />
+                  Address Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                       Street Address
                     </label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-3 text-gray-400" size={18} />
+                    <div className="relative group">
+                      <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 group-focus-within:text-brand-green transition-colors" size={18} />
                       <input
                         type="text"
                         name="address.street"
                         value={profileForm.address.street}
                         onChange={handleProfileChange}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="123 Main St"
+                        className="w-full pl-11 pr-4 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-light"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                       City
                     </label>
                     <input
@@ -332,12 +349,13 @@ export default function Profile() {
                       name="address.city"
                       value={profileForm.address.city}
                       onChange={handleProfileChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      placeholder="New York"
+                      className="w-full px-4 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-light"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                       State / Province
                     </label>
                     <input
@@ -345,12 +363,13 @@ export default function Profile() {
                       name="address.state"
                       value={profileForm.address.state}
                       onChange={handleProfileChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      placeholder="NY"
+                      className="w-full px-4 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-light"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                       ZIP / Postal Code
                     </label>
                     <input
@@ -358,19 +377,20 @@ export default function Profile() {
                       name="address.zipCode"
                       value={profileForm.address.zipCode}
                       onChange={handleProfileChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      placeholder="10001"
+                      className="w-full px-4 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-light"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                       Country
                     </label>
                     <select
                       name="address.country"
                       value={profileForm.address.country}
                       onChange={handleProfileChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all cursor-pointer font-light"
                     >
                       <option value="India">India</option>
                       <option value="USA">United States</option>
@@ -383,11 +403,11 @@ export default function Profile() {
               </div>
 
               {/* Submit Button */}
-              <div className="flex justify-end">
+              <div className="flex justify-end pt-6 border-t border-brand-gray/20">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-8 py-3 bg-brand-green text-white font-bold rounded-full hover:bg-brand-green-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
                 >
                   {loading ? (
                     <>
@@ -407,25 +427,36 @@ export default function Profile() {
 
           {/* Password Form */}
           {activeTab === 'password' && (
-            <form onSubmit={handlePasswordSubmit} className="space-y-6 max-w-md">
+            <form onSubmit={handlePasswordSubmit} className="space-y-6 max-w-xl">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <h3 className="text-lg font-serif text-brand-text-primary mb-6 flex items-center gap-2">
+                  <Key size={20} className="text-brand-green" />
+                  Change Password
+                </h3>
+                <p className="text-sm text-brand-text-secondary mb-8">
+                  Ensure your account is using a long, random password to stay secure.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                   Current Password
                 </label>
-                <div className="relative">
-                  <Key className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <div className="relative group">
+                  <Key className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 group-focus-within:text-brand-green transition-colors" size={18} />
                   <input
                     type={showPasswords.current ? 'text' : 'password'}
                     name="currentPassword"
                     value={passwordForm.currentPassword}
                     onChange={handlePasswordChange}
-                    className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Enter current password"
+                    className="w-full pl-11 pr-12 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-light"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPasswords(prev => ({ ...prev, current: !prev.current }))}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-brand-text-secondary hover:text-brand-text-primary transition-colors"
                   >
                     {showPasswords.current ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -433,71 +464,75 @@ export default function Profile() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                   New Password
                 </label>
-                <div className="relative">
-                  <Key className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <div className="relative group">
+                  <Key className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 group-focus-within:text-brand-green transition-colors" size={18} />
                   <input
                     type={showPasswords.new ? 'text' : 'password'}
                     name="newPassword"
                     value={passwordForm.newPassword}
                     onChange={handlePasswordChange}
-                    className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Enter new password"
+                    className="w-full pl-11 pr-12 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-light"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPasswords(prev => ({ ...prev, new: !prev.new }))}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-brand-text-secondary hover:text-brand-text-primary transition-colors"
                   >
                     {showPasswords.new ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters long</p>
+                <p className="text-[10px] text-brand-text-secondary mt-1.5 ml-1">Must be at least 8 characters long.</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
                   Confirm New Password
                 </label>
-                <div className="relative">
-                  <CheckCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <div className="relative group">
+                  <CheckCircle className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 group-focus-within:text-brand-green transition-colors" size={18} />
                   <input
                     type={showPasswords.confirm ? 'text' : 'password'}
                     name="confirmPassword"
                     value={passwordForm.confirmPassword}
                     onChange={handlePasswordChange}
-                    className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Confirm new password"
+                    className="w-full pl-11 pr-12 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-light"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPasswords(prev => ({ ...prev, confirm: !prev.confirm }))}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-brand-text-secondary hover:text-brand-text-primary transition-colors"
                   >
                     {showPasswords.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="animate-spin" size={18} />
-                    Changing Password...
-                  </>
-                ) : (
-                  <>
-                    <Key size={18} />
-                    Change Password
-                  </>
-                )}
-              </button>
+              <div className="pt-6 border-t border-brand-gray/20">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full md:w-auto px-8 py-3 bg-brand-green text-white font-bold rounded-full hover:bg-brand-green-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="animate-spin" size={18} />
+                      Changing Password...
+                    </>
+                  ) : (
+                    <>
+                      <Key size={18} />
+                      Change Password
+                    </>
+                  )}
+                </button>
+              </div>
             </form>
           )}
         </div>

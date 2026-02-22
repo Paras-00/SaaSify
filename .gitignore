@@ -2,14 +2,19 @@
 node_modules/
 package-lock.json
 yarn.lock
+jspm_packages/
+.npm
+.eslintcache
+*.tgz
+.yarn-integrity
 
 # Environment variables
 .env
-.env.local
-.env.*.local
-.env.development
-.env.staging
-.env.production
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
 
 # Logs
 logs/
@@ -19,17 +24,37 @@ yarn-debug.log*
 
 # OS files
 .DS_Store
+Thumbs.db
 .history/
 
 # Build files
 dist/
+dist-ssr/
 build/
+.next/
+out/
 
 # IDE
-.vscode/*
-!.vscode/extensions.json
-.idea
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
-# Storage
+# Storage & Uploads
 backend/storage/invoices/*
 !backend/storage/invoices/.gitkeep
+uploads/
+temp/
+tmp/
+.pm2/
+*.rdb
+
+# Testing & CI
+coverage/
+.nyc_output/
+test-results/

@@ -20,38 +20,38 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 const STATUS_CONFIG = {
-  paid: { 
-    label: 'Paid', 
+  paid: {
+    label: 'Paid',
     color: 'bg-green-100 text-green-800 border-green-200',
     icon: CheckCircle,
     iconColor: 'text-green-600'
   },
-  unpaid: { 
-    label: 'Unpaid', 
+  unpaid: {
+    label: 'Unpaid',
     color: 'bg-red-100 text-red-800 border-red-200',
     icon: XCircle,
     iconColor: 'text-red-600'
   },
-  partially_paid: { 
-    label: 'Partially Paid', 
+  partially_paid: {
+    label: 'Partially Paid',
     color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     icon: Clock,
     iconColor: 'text-yellow-600'
   },
-  overdue: { 
-    label: 'Overdue', 
+  overdue: {
+    label: 'Overdue',
     color: 'bg-red-100 text-red-800 border-red-200',
     icon: AlertCircle,
     iconColor: 'text-red-600'
   },
-  cancelled: { 
-    label: 'Cancelled', 
+  cancelled: {
+    label: 'Cancelled',
     color: 'bg-gray-100 text-gray-800 border-gray-200',
     icon: XCircle,
     iconColor: 'text-gray-600'
   },
-  refunded: { 
-    label: 'Refunded', 
+  refunded: {
+    label: 'Refunded',
     color: 'bg-purple-100 text-purple-800 border-purple-200',
     icon: CheckCircle,
     iconColor: 'text-purple-600'
@@ -75,33 +75,33 @@ export default function Invoices() {
 
   useEffect(() => {
     let isMounted = true;
-    
+
     const fetchInvoices = async () => {
       try {
         setLoading(true);
-      const params = {
-        page,
-        limit: 10,
-        ...(statusFilter !== 'all' && { status: statusFilter }),
-      };
-      
-      const response = await invoiceService.getMyInvoices(params);
-      
-      if (!isMounted) return;
-      
-      setInvoices(response.data.invoices || []);
-      setTotalPages(response.data.pagination?.totalPages || 1);
-      
-      // Calculate stats
-      if (response.data.invoices) {
-        const allInvoices = response.data.invoices;
-        setStats({
-          total: allInvoices.length,
-          paid: allInvoices.filter(i => i.status === 'paid').length,
-          unpaid: allInvoices.filter(i => i.status === 'unpaid').length,
-          overdue: allInvoices.filter(i => i.status === 'overdue').length,
-        });
-      }
+        const params = {
+          page,
+          limit: 10,
+          ...(statusFilter !== 'all' && { status: statusFilter }),
+        };
+
+        const response = await invoiceService.getMyInvoices(params);
+
+        if (!isMounted) return;
+
+        setInvoices(response.data.invoices || []);
+        setTotalPages(response.data.pagination?.totalPages || 1);
+
+        // Calculate stats
+        if (response.data.invoices) {
+          const allInvoices = response.data.invoices;
+          setStats({
+            total: allInvoices.length,
+            paid: allInvoices.filter(i => i.status === 'paid').length,
+            unpaid: allInvoices.filter(i => i.status === 'unpaid').length,
+            overdue: allInvoices.filter(i => i.status === 'overdue').length,
+          });
+        }
       } catch (error) {
         if (!isMounted) return;
         console.error('Error fetching invoices:', error);
@@ -114,7 +114,7 @@ export default function Invoices() {
     };
 
     fetchInvoices();
-    
+
     return () => {
       isMounted = false;
     };
@@ -147,42 +147,43 @@ export default function Invoices() {
       await invoiceService.downloadInvoicePDF(invoiceId);
       toast.success('Invoice downloaded successfully');
     } catch (error) {
+      console.error('Download error:', error);
       toast.error('Failed to download invoice');
     }
   };
 
   return (
-    <div>
+    <div className="font-sans">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Invoices</h1>
-          <p className="text-gray-600 mt-1">View and manage your billing history</p>
+          <h1 className="text-3xl font-serif text-brand-text-primary font-medium">Invoices</h1>
+          <p className="text-brand-text-secondary mt-1">View and manage your billing history and payments.</p>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <StatsCard
-          icon={<FileText className="text-blue-600" size={24} />}
+          icon={<FileText size={20} />}
           label="Total Invoices"
           value={stats.total}
           color="blue"
         />
         <StatsCard
-          icon={<CheckCircle className="text-green-600" size={24} />}
+          icon={<CheckCircle size={20} />}
           label="Paid"
           value={stats.paid}
           color="green"
         />
         <StatsCard
-          icon={<Clock className="text-yellow-600" size={24} />}
+          icon={<Clock size={20} />}
           label="Unpaid"
           value={stats.unpaid}
           color="yellow"
         />
         <StatsCard
-          icon={<AlertCircle className="text-red-600" size={24} />}
+          icon={<AlertCircle size={20} />}
           label="Overdue"
           value={stats.overdue}
           color="red"
@@ -190,30 +191,30 @@ export default function Invoices() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <div className="bg-white border border-gray-300 rounded-2xl p-6 mb-8 shadow-sm">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search */}
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          <div className="flex-1 relative group">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-brand-text-secondary group-focus-within:text-brand-green transition-colors" size={20} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search invoices..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2.5 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-light"
             />
           </div>
 
           {/* Status Filter */}
           <div className="flex items-center gap-2">
-            <Filter size={20} className="text-gray-400" />
+            <Filter size={20} className="text-brand-text-secondary" />
             <select
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value);
                 setPage(1);
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="px-4 py-2.5 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all cursor-pointer"
             >
               <option value="all">All Status</option>
               <option value="paid">Paid</option>
@@ -229,19 +230,21 @@ export default function Invoices() {
 
       {/* Invoices List */}
       {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="animate-spin h-8 w-8 text-purple-600" />
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="animate-spin h-8 w-8 text-brand-green" />
         </div>
       ) : filteredInvoices.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-          <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold text-gray-700 mb-2">
+        <div className="bg-white border border-gray-300 rounded-2xl p-16 text-center shadow-sm">
+          <div className="w-16 h-16 rounded-full bg-brand-gray/5 flex items-center justify-center mx-auto mb-6 border border-brand-gray/10">
+            <FileText className="h-8 w-8 text-brand-text-secondary" />
+          </div>
+          <h2 className="text-2xl font-serif text-brand-text-primary mb-2">
             {searchQuery ? 'No invoices found' : 'No invoices yet'}
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-brand-text-secondary mb-6 max-w-md mx-auto">
             {searchQuery
-              ? 'Try adjusting your search or filters'
-              : 'Your invoices will appear here once you make a purchase'}
+              ? 'Try adjusting your search terms or filters to find what you are looking for.'
+              : 'Your invoices will appear here once you make a purchase.'}
           </p>
         </div>
       ) : (
@@ -261,21 +264,21 @@ export default function Invoices() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-6 flex items-center justify-center gap-2">
+            <div className="mt-8 flex items-center justify-center gap-3">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-brand-text-primary hover:bg-brand-gray/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 Previous
               </button>
-              <span className="px-4 py-2 text-gray-600">
-                Page {page} of {totalPages}
+              <span className="px-4 py-2 text-brand-text-secondary text-sm">
+                Page <span className="text-brand-text-primary font-medium">{page}</span> of {totalPages}
               </span>
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-brand-text-primary hover:bg-brand-gray/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>
@@ -289,19 +292,19 @@ export default function Invoices() {
 
 function StatsCard({ icon, label, value, color }) {
   const colorClasses = {
-    blue: 'bg-blue-50',
-    green: 'bg-green-50',
-    yellow: 'bg-yellow-50',
-    red: 'bg-red-50',
+    blue: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+    green: 'text-brand-green bg-brand-green/10 border-brand-green/20',
+    yellow: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20',
+    red: 'text-red-400 bg-red-500/10 border-red-500/20',
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      <div className={`${colorClasses[color]} w-12 h-12 rounded-lg flex items-center justify-center mb-3`}>
+    <div className="bg-white border border-gray-300 rounded-2xl p-6 shadow-sm">
+      <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 border ${colorClasses[color]} bg-opacity-20`}>
         {icon}
       </div>
-      <p className="text-sm text-gray-600 mb-1">{label}</p>
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
+      <p className="text-sm font-medium text-brand-text-secondary mb-1 uppercase tracking-wider">{label}</p>
+      <p className="text-2xl font-serif text-brand-text-primary">{value}</p>
     </div>
   );
 }
@@ -314,41 +317,47 @@ function InvoiceCard({ invoice, onClick, onDownload, formatDate, formatCurrency 
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-all cursor-pointer group"
+      className="bg-white border border-gray-300 rounded-xl p-6 hover:border-[#004643] transition-all duration-300 cursor-pointer group shadow-sm"
     >
       <div className="flex items-start justify-between gap-4">
         {/* Invoice Info */}
         <div className="flex items-start gap-4 flex-1 min-w-0">
-          <div className={`flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${statusConfig.color}`}>
-            <StatusIcon className={statusConfig.iconColor} size={24} />
+          <div className={`flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center border border-gray-300 ${invoice.status === 'paid' ? 'bg-brand-green/10 text-brand-green' :
+            invoice.status === 'overdue' ? 'bg-red-500/10 text-red-500' :
+              'bg-brand-gray/10 text-brand-text-secondary'
+            }`}>
+            <StatusIcon size={24} />
           </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-2 flex-wrap">
-              <h3 className="text-xl font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">
+              <h3 className="text-xl font-medium text-brand-text-primary group-hover:text-brand-green transition-colors font-serif">
                 {invoice.invoiceNumber}
               </h3>
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${statusConfig.color}`}>
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${invoice.status === 'paid' ? 'bg-brand-green/10 text-brand-green border-brand-green/20' :
+                invoice.status === 'overdue' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                  'bg-brand-gray/10 text-brand-text-secondary border-brand-gray/20'
+                }`}>
                 {statusConfig.label}
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-2">
-              <div className="flex items-center gap-1">
-                <Calendar size={16} />
+            <div className="flex flex-wrap items-center gap-4 text-sm text-brand-text-secondary mb-2">
+              <div className="flex items-center gap-1.5">
+                <Calendar size={14} />
                 <span>Issued: {formatDate(invoice.invoiceDate)}</span>
               </div>
-              
+
               {invoice.dueDate && (
-                <div className={`flex items-center gap-1 ${isDue ? 'text-red-600 font-medium' : ''}`}>
-                  <Clock size={16} />
+                <div className={`flex items-center gap-1.5 ${isDue ? 'text-red-400 font-medium' : ''}`}>
+                  <Clock size={14} />
                   <span>Due: {formatDate(invoice.dueDate)}</span>
                 </div>
               )}
             </div>
 
             {invoice.description && (
-              <p className="text-sm text-gray-600 truncate">
+              <p className="text-sm text-brand-text-secondary truncate max-w-md">
                 {invoice.description}
               </p>
             )}
@@ -356,13 +365,13 @@ function InvoiceCard({ invoice, onClick, onDownload, formatDate, formatCurrency 
         </div>
 
         {/* Amount & Actions */}
-        <div className="flex flex-col items-end gap-3">
+        <div className="flex flex-col items-end gap-4">
           <div className="text-right">
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-2xl font-serif text-brand-text-primary">
               {formatCurrency(invoice.totalAmount, invoice.currency)}
             </div>
             {invoice.status === 'partially_paid' && invoice.paidAmount > 0 && (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-brand-green">
                 Paid: {formatCurrency(invoice.paidAmount, invoice.currency)}
               </p>
             )}
@@ -375,20 +384,22 @@ function InvoiceCard({ invoice, onClick, onDownload, formatDate, formatCurrency 
                   e.stopPropagation();
                   onClick(e);
                 }}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium flex items-center gap-1"
+                className="px-4 py-2 bg-brand-green text-white rounded-lg hover:bg-brand-green-hover transition-colors text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"
               >
-                <CreditCard size={16} />
+                <CreditCard size={14} />
                 Pay Now
               </button>
             )}
             <button
               onClick={onDownload}
-              className="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+              className="p-2 text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-gray/10 rounded-lg transition-colors border border-transparent hover:border-brand-gray/10"
               title="Download PDF"
             >
-              <Download size={20} />
+              <Download size={18} />
             </button>
-            <ChevronRight className="text-gray-400 group-hover:text-purple-600 transition-colors" size={24} />
+            <div className="w-8 h-8 rounded-full border border-brand-gray/10 flex items-center justify-center text-brand-text-secondary group-hover:border-brand-green group-hover:text-brand-green transition-all">
+              <ChevronRight size={16} />
+            </div>
           </div>
         </div>
       </div>

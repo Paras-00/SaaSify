@@ -19,6 +19,15 @@ export const authService = {
     return data;
   },
 
+  // Verify Login 2FA
+  async verifyLogin2FA(email, code) {
+    const { data } = await api.post('/auth/verify-login-2fa', { email, code });
+    if (data.data.accessToken) {
+      localStorage.setItem('accessToken', data.data.accessToken);
+    }
+    return data;
+  },
+
   // Logout user
   async logout() {
     try {
@@ -74,25 +83,50 @@ export const authService = {
 
   // Enable 2FA
   async enable2FA() {
-    const { data } = await api.post('/auth/2fa/enable');
+    const { data } = await api.post('/auth/enable-2fa');
     return data;
   },
 
   // Verify 2FA
-  async verify2FA(token) {
-    const { data } = await api.post('/auth/2fa/verify', { token });
+  async verify2FA(code) {
+    const { data } = await api.post('/auth/verify-2fa', { code });
     return data;
   },
 
   // Disable 2FA
-  async disable2FA(token) {
-    const { data } = await api.post('/auth/2fa/disable', { token });
+  async disable2FA(code) {
+    const { data } = await api.post('/auth/disable-2fa', { code });
+    return data;
+  },
+
+  // Setup 2FA (Get QR Code)
+  async setup2FA(token) {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+    const { data } = await api.post('/auth/enable-2fa', {}, config);
+    return data;
+  },
+
+  // Verify 2FA Setup
+  async verify2FASetup(token, otp) {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+    const { data } = await api.post('/auth/verify-2fa', { code: otp }, config);
+    if (data.data && data.data.accessToken) {
+      localStorage.setItem('accessToken', data.data.accessToken);
+    }
     return data;
   },
 
   // Refresh token
   async refreshToken() {
-    const { data } = await api.post('/auth/refresh');
+    const { data } = await api.post('/auth/refresh-token');
     if (data.data.accessToken) {
       localStorage.setItem('accessToken', data.data.accessToken);
     }

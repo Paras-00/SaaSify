@@ -1,4 +1,5 @@
 import axios from 'axios';
+import https from 'https';
 import logger from '../utils/logger.js';
 
 /**
@@ -10,12 +11,12 @@ class GoDaddyService {
     this.apiKey = process.env.GODADDY_API_KEY;
     this.apiSecret = process.env.GODADDY_API_SECRET;
     this.isProduction = process.env.GODADDY_ENV === 'production';
-    
+
     // Determine base URL based on environment
     // OTE = GoDaddy's test environment (api.ote-godaddy.com)
     // Production = Live environment (api.godaddy.com)
-    this.baseURL = process.env.GODADDY_API_URL || 
-                   (this.isProduction ? 'https://api.godaddy.com' : 'https://api.ote-godaddy.com');
+    this.baseURL = process.env.GODADDY_API_URL ||
+      (this.isProduction ? 'https://api.godaddy.com' : 'https://api.ote-godaddy.com');
 
     if (!this.apiKey || !this.apiSecret) {
       logger.warn('GoDaddy API credentials not configured. Domain features will be limited.');
@@ -32,6 +33,9 @@ class GoDaddyService {
         Accept: 'application/json',
       },
       timeout: 30000, // 30 seconds
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: this.isProduction,
+      }),
     });
 
     // Add response interceptor for error handling
@@ -338,7 +342,7 @@ class GoDaddyService {
    */
   getFallbackPricing(tld) {
     const cleanTld = tld.replace(/^\./, '').toLowerCase();
-    
+
     const fallbackPrices = {
       com: { registration: 12.99, renewal: 14.99, transfer: 12.99 },
       net: { registration: 13.99, renewal: 15.99, transfer: 13.99 },

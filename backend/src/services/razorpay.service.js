@@ -38,13 +38,20 @@ class RazorpayService {
       // Razorpay expects amount in smallest currency unit (paise for INR)
       const amountInPaise = Math.round(amount * 100);
 
+      logger.info(`DEBUG: RazorpayService.createOrder called for amount: ${amountInPaise} using Key ID: ${this.keyId}`);
+
       const order = await this.client.orders.create({
         amount: amountInPaise,
         currency,
         receipt,
         notes: notes || {},
-        payment_capture: 1, // Auto-capture payment
+        // payment_capture: 1, // This is often not needed for orders.create in newer SDKs or can be redundant
       });
+
+      if (!order) {
+        logger.error('Razorpay order creation returned undefined');
+        throw new Error('Razorpay API returned an empty order object');
+      }
 
       logger.info(`Razorpay order created: ${order.id}`);
 
@@ -53,11 +60,20 @@ class RazorpayService {
         amount: order.amount / 100, // Convert back to main currency unit
         currency: order.currency,
         receipt: order.receipt,
-        status: order.status,
-        createdAt: new Date(order.created_at * 1000),
+        status: order.status || 'created',
+        createdAt: new Date((order.created_at || Date.now() / 1000) * 1000),
       };
     } catch (error) {
-      logger.error('Razorpay order creation failed:', error);
+      logger.error('Razorpay order creation failed:', {
+        message: error.message,
+        stack: error.stack,
+        code: error.code,
+        description: error.description,
+        source: error.source,
+        step: error.step,
+        reason: error.reason,
+        metadata: error.metadata
+      });
       throw new Error(`Failed to create Razorpay order: ${error.message}`);
     }
   }

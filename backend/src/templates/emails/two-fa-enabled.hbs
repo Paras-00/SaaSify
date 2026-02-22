@@ -1,69 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2FA Enabled</title>
+  <title>2FA Enabled – {{companyName}}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px;">
+
+<body
+  style="margin:0;padding:0;background-color:#EAECEF;font-family:'Inter',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#EAECEF;padding:40px 20px;">
     <tr>
       <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-          <!-- Header -->
+        <table width="600" cellpadding="0" cellspacing="0"
+          style="background-color:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.05);">
           <tr>
-            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">{{companyName}}</h1>
+            <td style="background-color:#087d51;padding:48px 40px;text-align:center;">
+              <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                <tr>
+                  <td
+                    style="background-color:rgba(255,255,255,0.2);border-radius:12px;width:44px;height:44px;text-align:center;vertical-align:middle;">
+                    <span style="color:#ffffff;font-weight:700;font-size:24px;line-height:44px;">S</span>
+                  </td>
+                  <td style="padding-left:14px;">
+                    <span
+                      style="color:#ffffff;font-size:26px;font-weight:700;letter-spacing:-0.5px;">{{companyName}}</span>
+                  </td>
+                </tr>
+              </table>
+              <div style="margin-top:20px;color:rgba(255,255,255,0.9);font-size:16px;">Security Update</div>
             </td>
           </tr>
-          
-          <!-- Content -->
           <tr>
-            <td style="padding: 40px 30px;">
-              <h2 style="color: #333333; margin: 0 0 20px 0; font-size: 24px;">Two-Factor Authentication Enabled</h2>
-              
-              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">Hi {{firstName}},</p>
-              
-              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
-                Two-factor authentication (2FA) has been successfully enabled on your account.
-              </p>
-              
-              <div style="background-color: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; border-radius: 4px;">
-                <p style="color: #155724; margin: 0; font-size: 14px;">
-                  <strong>✓ Enhanced Security:</strong> Your account is now protected with an additional layer of security.
+            <td style="padding:56px 48px;background-color:#ffffff;text-align:center;">
+              <h2
+                style="color:#111827;margin:0 0 16px 0;font-size:28px;font-weight:700;letter-spacing:-0.8px;line-height:1.2;">
+                2FA is now active 🛡️</h2>
+              <p style="color:#4B5563;font-size:16px;line-height:1.7;margin:0 0 32px 0;">Hi <strong
+                  style="color:#111827;">{{firstName}}</strong>, two-factor authentication has been successfully enabled
+                for your account.</p>
+              <div
+                style="background-color:#F0FDF4;border:1px solid #DCFCE7;border-radius:20px;padding:32px;margin-bottom:32px;text-align:left;">
+                <p style="color:#166534;font-size:14px;line-height:1.6;margin:0;">
+                  Your account is now more secure. Every time you log in, you'll be asked for a verification code from
+                  your authenticator app or email.
                 </p>
               </div>
-              
-              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
-                From now on, you'll need to enter a 6-digit code from your authenticator app when logging in.
-              </p>
-              
-              <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
-                <strong>Important:</strong> Make sure to keep your authenticator app backed up. If you lose access to it, you may be locked out of your account.
-              </p>
-              
-              <div style="background-color: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; border-radius: 4px;">
-                <p style="color: #721c24; margin: 0; font-size: 14px;">
-                  <strong>Didn't enable 2FA?</strong> If you didn't enable two-factor authentication, please contact support immediately.
-                </p>
-              </div>
-              
-              <p style="color: #666666; line-height: 1.6; margin: 0;">
-                Best regards,<br>
-                The {{companyName}} Team
-              </p>
             </td>
           </tr>
-          
-          <!-- Footer -->
           <tr>
-            <td style="background-color: #f8f8f8; padding: 30px; text-align: center; border-top: 1px solid #eeeeee;">
-              <p style="color: #999999; font-size: 14px; margin: 0 0 10px 0;">
-                Need help? Contact us at <a href="mailto:{{supportEmail}}" style="color: #667eea; text-decoration: none;">{{supportEmail}}</a>
-              </p>
-              <p style="color: #999999; font-size: 12px; margin: 0;">
-                &copy; {{currentYear}} {{companyName}}. All rights reserved.
-              </p>
+            <td style="background-color:#087d51;padding:48px 40px;text-align:center;">
+              <p style="color:rgba(255,255,255,0.7);font-size:14px;margin:0 0 20px 0;line-height:1.6;">Security you can
+                trust. Built for the modern enterprise.</p>
+              <div style="height:1px;background-color:rgba(255,255,255,0.1);margin:0 auto 24px auto;"></div>
+              <p style="color:rgba(255,255,255,0.9);font-size:14px;margin:0 0 8px 0;">&copy; {{currentYear}}
+                {{companyName}}. All rights reserved.</p>
             </td>
           </tr>
         </table>
@@ -71,4 +63,5 @@
     </tr>
   </table>
 </body>
+
 </html>

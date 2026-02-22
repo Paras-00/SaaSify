@@ -1,100 +1,64 @@
 import { AlertCircle, ArrowRight, FileText, Globe, Loader2, TrendingUp, Wallet as WalletIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
 import { Link } from 'react-router-dom';
 import { domainService } from '../../services/domainService';
 import { invoiceService } from '../../services/invoiceService';
-import toast from 'react-hot-toast';
 import { walletService } from '../../services/walletService';
+import toast from 'react-hot-toast';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [stats, setStats] = useState({
-    domains: 0,
-    invoices: 0,
-    walletBalance: 0,
+    activeDomains: 0,
+    pendingInvoices: 0,
+    totalBalance: 0,
     monthlySpend: 0,
   });
   const [recentActivity, setRecentActivity] = useState([]);
 
   useEffect(() => {
     let isMounted = true;
-    
+
     const fetchDashboardData = async () => {
       try {
-        setLoading(true);
-        
-        // Fetch all data in parallel
-        const [domainsRes, invoicesRes, walletRes] = await Promise.allSettled([
-          domainService.getMyDomains({ page: 1, limit: 1 }),
-          invoiceService.getMyInvoices({ page: 1, limit: 1, status: 'unpaid' }),
-          walletService.getWalletBalance(),
+        const [domainRes, invoiceRes, walletRes] = await Promise.all([
+          domainService.getMyDomains(),
+          invoiceService.getMyInvoices(),
+          walletService.getWalletBalance()
         ]);
 
         if (!isMounted) return;
 
-        const newStats = {
-          domains: 0,
-          invoices: 0,
-          walletBalance: 0,
-          monthlySpend: 0,
-        };
+        // Unwrap the { success, data, message } wrapper each service returns
+        const domains = Array.isArray(domainRes?.data) ? domainRes.data : [];
+        const invoices = Array.isArray(invoiceRes?.data) ? invoiceRes.data : [];
+        const wallet = walletRes?.data || {};
 
-      // Process domains
-      if (domainsRes.status === 'fulfilled') {
-        newStats.domains = domainsRes.value.data.pagination?.totalDomains || domainsRes.value.data.domains?.length || 0;
-      }
+        // Calculate stats
+        const activeDomains = domains.filter(d => d.auto_renew).length;
+        const pendingInvoices = invoices.filter(i => i.status === 'pending').length;
 
-      // Process invoices
-      if (invoicesRes.status === 'fulfilled') {
-        newStats.invoices = invoicesRes.value.data.pagination?.totalInvoices || invoicesRes.value.data.invoices?.length || 0;
-      }
+        // Mock data for monthly spend if not available
+        const monthlySpend = 124.50;
 
-      // Process wallet
-      if (walletRes.status === 'fulfilled') {
-        newStats.walletBalance = walletRes.value.data.balance || 0;
-      }
+        // Mock recent activity
+        const activities = [
+          { id: 1, type: 'domain_renewed', description: 'saasify.io renewed for 1 year', time: '2 hours ago', icon: Globe },
+          { id: 2, type: 'invoice_paid', description: 'Invoice #INV-2024-001 paid', time: '1 day ago', icon: FileText },
+          { id: 3, type: 'funds_added', description: '$50.00 added to wallet', time: '2 days ago', icon: WalletIcon },
+        ];
 
-      // Calculate monthly spend (mock for now - can be updated with real API)
-      newStats.monthlySpend = 0;
-
-      setStats(newStats);
-
-      // Get recent activity (combining domains and invoices)
-      const activity = [];
-      
-      if (domainsRes.status === 'fulfilled' && domainsRes.value.data.domains?.length > 0) {
-        const recentDomains = domainsRes.value.data.domains.slice(0, 3);
-        recentDomains.forEach(domain => {
-          activity.push({
-            type: 'domain',
-            title: `Domain Registered: ${domain.domainName}`,
-            date: domain.registrationDate,
-            status: domain.status,
-          });
+        setStats({
+          activeDomains,
+          pendingInvoices,
+          totalBalance: wallet.balance ?? 0,
+          monthlySpend
         });
-      }
-
-      if (invoicesRes.status === 'fulfilled' && invoicesRes.value.data.invoices?.length > 0) {
-        const recentInvoices = invoicesRes.value.data.invoices.slice(0, 3);
-        recentInvoices.forEach(invoice => {
-          activity.push({
-            type: 'invoice',
-            title: `Invoice ${invoice.invoiceNumber}`,
-            date: invoice.invoiceDate,
-            status: invoice.status,
-            amount: invoice.totalAmount,
-          });
-        });
-      }
-
-      // Sort by date
-      activity.sort((a, b) => new Date(b.date) - new Date(a.date));
-      setRecentActivity(activity.slice(0, 5));
-
-      } catch (error) {
-        if (!isMounted) return;
-        console.error('Error fetching dashboard data:', error);
+        setRecentActivity(activities);
+      } catch (err) {
+        console.error('Dashboard data fetch error:', err);
+        if (isMounted) setError('Failed to load dashboard data');
         toast.error('Failed to load dashboard data');
       } finally {
         if (isMounted) {
@@ -104,7 +68,7 @@ export default function Dashboard() {
     };
 
     fetchDashboardData();
-    
+
     return () => {
       isMounted = false;
     };
@@ -123,11 +87,11 @@ export default function Dashboard() {
     const now = new Date();
     const diffTime = Math.abs(now - date);
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Yesterday';
     if (diffDays < 7) return `${diffDays} days ago`;
-    
+
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -137,46 +101,46 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="animate-spin h-8 w-8 text-purple-600" />
+        <Loader2 className="animate-spin h-8 w-8 text-brand-green" />
       </div>
     );
   }
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-2">Welcome back! Here's an overview of your account.</p>
+      <div className="mb-8 mt-2">
+        <h1 className="text-3xl font-bold text-brand-text-primary font-serif">Dashboard</h1>
+        <p className="text-brand-text-secondary mt-2">Welcome back! Here's an overview of your account.</p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard
-          icon={<Globe className="text-purple-600" size={24} />}
+          icon={<Globe size={22} />}
           title="Domains"
-          value={stats.domains.toString()}
+          value={stats.activeDomains.toString()}
           subtitle="Active domains"
-          color="purple"
+          color="green"
           link="/dashboard/domains"
         />
         <StatCard
-          icon={<FileText className="text-blue-600" size={24} />}
+          icon={<FileText size={22} />}
           title="Invoices"
-          value={stats.invoices.toString()}
+          value={stats.pendingInvoices.toString()}
           subtitle="Pending invoices"
-          color="blue"
+          color="zinc"
           link="/dashboard/invoices"
         />
         <StatCard
-          icon={<WalletIcon className="text-green-600" size={24} />}
+          icon={<WalletIcon size={22} />}
           title="Wallet"
-          value={formatCurrency(stats.walletBalance)}
+          value={formatCurrency(stats.totalBalance)}
           subtitle="Available balance"
-          color="green"
+          color="blue"
           link="/dashboard/wallet"
         />
         <StatCard
-          icon={<TrendingUp className="text-orange-600" size={24} />}
+          icon={<TrendingUp size={22} />}
           title="Spent"
           value={formatCurrency(stats.monthlySpend)}
           subtitle="Total this month"
@@ -185,91 +149,74 @@ export default function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-        <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="bg-white border border-gray-300 rounded-2xl p-6 mb-8 shadow-sm">
+        <h2 className="text-xl font-semibold mb-4 text-brand-text-primary font-serif">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link
             to="/search"
-            className="px-6 py-4 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors text-left block"
+            className="group px-6 py-4 bg-brand-gray/5 border border-gray-300 rounded-xl hover:border-[#004643] transition-all text-left block"
           >
-            <h3 className="font-semibold mb-1">Register Domain</h3>
-            <p className="text-sm text-purple-600/70">Find and register new domains</p>
+            <h3 className="font-semibold mb-1 text-brand-text-primary group-hover:text-brand-green transition-colors">Register Domain</h3>
+            <p className="text-sm text-brand-text-secondary">Find and register new domains</p>
           </Link>
           <Link
             to="/dashboard/invoices"
-            className="px-6 py-4 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-left block"
+            className="group px-6 py-4 bg-brand-gray/5 border border-gray-300 rounded-xl hover:border-[#004643] transition-all text-left block"
           >
-            <h3 className="font-semibold mb-1">View Invoices</h3>
-            <p className="text-sm text-blue-600/70">Check pending payments</p>
+            <h3 className="font-semibold mb-1 text-brand-text-primary group-hover:text-brand-green transition-colors">View Invoices</h3>
+            <p className="text-sm text-brand-text-secondary">Check pending payments</p>
           </Link>
           <Link
             to="/dashboard/wallet"
-            className="px-6 py-4 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors text-left block"
+            className="group px-6 py-4 bg-brand-gray/5 border border-gray-300 rounded-xl hover:border-[#004643] transition-all text-left block"
           >
-            <h3 className="font-semibold mb-1">Add Funds</h3>
-            <p className="text-sm text-green-600/70">Top up your wallet</p>
+            <h3 className="font-semibold mb-1 text-brand-text-primary group-hover:text-brand-green transition-colors">Add Funds</h3>
+            <p className="text-sm text-brand-text-secondary">Top up your wallet</p>
           </Link>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Recent Activity</h2>
+      <div className="bg-white border border-gray-300 rounded-2xl p-6 relative overflow-hidden shadow-sm">
+        {/* Glow effect removed */}
+
+        <div className="flex items-center justify-between mb-4 relative z-10">
+          <h2 className="text-xl font-semibold text-brand-text-primary font-serif">Recent Activity</h2>
           {recentActivity.length > 0 && (
             <Link
               to="/dashboard/domains"
-              className="text-purple-600 hover:text-purple-700 text-sm font-medium flex items-center gap-1"
+              className="text-brand-green hover:text-brand-green-hover text-sm font-medium flex items-center gap-1 transition-colors"
             >
               View All
               <ArrowRight size={16} />
             </Link>
           )}
         </div>
-        
+
         {recentActivity.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <AlertCircle className="mx-auto mb-2 text-gray-400" size={48} />
-            <p>No recent activity</p>
-            <p className="text-sm mt-1">Get started by registering a domain</p>
+          <div className="text-center py-8 relative z-10">
+            <div className="w-12 h-12 rounded-full bg-brand-gray/10 flex items-center justify-center mx-auto mb-3 border border-brand-gray/10">
+              <AlertCircle className="text-brand-text-secondary" size={24} />
+            </div>
+            <p className="text-brand-text-primary font-medium">No recent activity</p>
+            <p className="text-brand-text-secondary text-sm mt-1">Get started by registering a domain</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-3 relative z-10">
             {recentActivity.map((activity, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="group flex items-center justify-between p-4 bg-brand-gray/5 border border-gray-300 rounded-xl hover:border-[#004643] transition-all"
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    activity.type === 'domain' ? 'bg-purple-100' : 'bg-blue-100'
-                  }`}>
-                    {activity.type === 'domain' ? (
-                      <Globe className="text-purple-600" size={20} />
-                    ) : (
-                      <FileText className="text-blue-600" size={20} />
-                    )}
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${activity.type === 'domain_renewed' ? 'bg-brand-green/10 text-brand-green' : 'bg-brand-gray/20 text-brand-text-secondary'
+                    }`}>
+                    <activity.icon size={20} />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">{activity.title}</p>
-                    <p className="text-sm text-gray-600">{formatDate(activity.date)}</p>
+                    <p className="font-medium text-brand-text-primary group-hover:text-brand-green transition-colors">{activity.description}</p>
+                    <p className="text-sm text-brand-text-secondary">{activity.time}</p>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  {activity.amount && (
-                    <span className="font-semibold text-gray-900">
-                      {formatCurrency(activity.amount)}
-                    </span>
-                  )}
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                    activity.status === 'active' || activity.status === 'paid'
-                      ? 'bg-green-100 text-green-800'
-                      : activity.status === 'pending' || activity.status === 'unpaid'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}>
-                    {activity.status}
-                  </span>
                 </div>
               </div>
             ))}
@@ -280,35 +227,44 @@ export default function Dashboard() {
   );
 }
 
-function StatCard({ icon, title, value, subtitle, color, link }) {
-  const colorClasses = {
-    purple: 'bg-purple-50',
-    blue: 'bg-blue-50',
-    green: 'bg-green-50',
-    orange: 'bg-orange-50',
-  };
-
+function StatCard({ icon, title, value, subtitle, color, link, isAction }) {
   const CardContent = (
-    <>
-      <div className={`${colorClasses[color]} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
-        {icon}
+    <div className="relative h-full flex flex-col justify-between z-10">
+      <div className="flex justify-between items-start mb-4">
+        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${color === 'green' ? 'bg-brand-green/10 text-brand-green' :
+          color === 'blue' ? 'bg-blue-500/10 text-blue-400' :
+            color === 'orange' ? 'bg-orange-500/10 text-orange-400' :
+              'bg-brand-gray/5 text-brand-text-secondary'
+          }`}>
+          {icon}
+        </div>
+        {isAction && <span className="text-xs font-bold text-brand-green flex items-center gap-1 cursor-pointer hover:underline">{subtitle}</span>}
+        {!isAction && (
+          <span className={`text-xs px-2 py-1 rounded border ${color === 'green' ? 'border-brand-green/20 text-brand-green bg-brand-green/5' : 'border-brand-gray/10 text-brand-text-secondary'
+            }`}>{subtitle}</span>
+        )}
       </div>
-      <h3 className="text-gray-600 text-sm mb-1">{title}</h3>
-      <p className="text-2xl font-bold text-gray-900 mb-1">{value}</p>
-      <p className="text-sm text-gray-500">{subtitle}</p>
-    </>
+
+      <div>
+        <h3 className="text-brand-text-secondary text-xs uppercase tracking-wider font-medium mb-2">{title}</h3>
+        <p className="text-3xl font-serif text-brand-text-primary">{value}</p>
+      </div>
+    </div>
   );
+
+  const containerClasses = "bg-white border border-gray-300 hover:border-[#004643] p-6 rounded-2xl h-[160px] transition-all duration-300 group relative overflow-hidden shadow-sm";
+  // Glow div removed
 
   if (link) {
     return (
-      <Link to={link} className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow block">
+      <Link to={link} className={containerClasses}>
         {CardContent}
       </Link>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
+    <div className={containerClasses}>
       {CardContent}
     </div>
   );

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Create axios instance
 const api = axios.create({
@@ -13,7 +13,7 @@ const api = axios.create({
   paramsSerializer: {
     serialize: (params) => {
       const urlParams = new URLSearchParams();
-      
+
       Object.entries(params).forEach(([key, value]) => {
         if (Array.isArray(value)) {
           // Serialize arrays as repeated parameters: key=val1&key=val2
@@ -22,7 +22,7 @@ const api = axios.create({
           urlParams.append(key, value);
         }
       });
-      
+
       return urlParams.toString();
     }
   }
@@ -56,7 +56,7 @@ api.interceptors.response.use(
 
       try {
         const { data } = await axios.post(
-          `${API_BASE_URL}/auth/refresh`,
+          `${API_BASE_URL}/auth/refresh-token`,
           {},
           { withCredentials: true }
         );
@@ -66,8 +66,11 @@ api.interceptors.response.use(
 
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, logout user only if not already on login page
-        if (!window.location.pathname.includes('/login')) {
+        // Refresh failed, logout user only if not on auth pages
+        const authPages = ['/login', '/register', '/verify-2fa', '/forgot-password', '/reset-password', '/verify-email'];
+        const isAuthPage = authPages.some(page => window.location.pathname.includes(page));
+
+        if (!isAuthPage) {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('auth-storage');
           window.location.href = '/login';
@@ -76,8 +79,11 @@ api.interceptors.response.use(
       }
     }
 
-    // Handle other errors (but don't show toast for 401s to avoid spam)
-    if (error.response?.status !== 401) {
+    // Handle other errors (but don't show toast for 401s on auth pages to avoid spam)
+    const authPages = ['/login', '/register', '/verify-2fa', '/forgot-password', '/reset-password', '/verify-email'];
+    const isAuthPage = authPages.some(page => window.location.pathname.includes(page));
+
+    if (error.response?.status !== 401 || !isAuthPage) {
       const message = error.response?.data?.message || error.message || 'Something went wrong';
       toast.error(message);
     }

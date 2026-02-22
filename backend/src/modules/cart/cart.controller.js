@@ -30,7 +30,7 @@ export const getCart = async (req, res) => {
   try {
     const userId = req.user.userId;
     const cartKey = getCartKey(userId);
-    
+
     const cart = cartStorage.get(cartKey) || {
       items: [],
       subtotal: 0,
@@ -109,9 +109,9 @@ export const addToCart = async (req, res) => {
       action: 'order_create',
       category: 'order',
       description: `Added ${name} to cart`,
-      metadata: { 
-        type, 
-        itemId, 
+      metadata: {
+        type,
+        itemId,
         price,
         cartTotal: cart.total,
         itemsCount: cart.items.length,
@@ -585,8 +585,8 @@ export const checkout = async (req, res) => {
         // Convert USD to INR (approximate rate: 1 USD = 83 INR)
         // In production, use a real-time currency conversion API
         const USD_TO_INR_RATE = 83;
-        const amountInINR = cart.currency === 'USD' 
-          ? Math.round(cart.total * USD_TO_INR_RATE * 100) / 100 
+        const amountInINR = cart.currency === 'USD'
+          ? Math.round(cart.total * USD_TO_INR_RATE * 100) / 100
           : cart.total;
 
         logger.info(`Creating Razorpay order: ${cart.currency} ${cart.total} → INR ${amountInINR}`);
@@ -702,7 +702,7 @@ export const verifyPayment = async (req, res) => {
 
     // Get payment details from Razorpay
     const payment = await razorpayService.getPayment(razorpayPaymentId);
-    
+
     // Get user for email
     const user = await User.findById(userId);
 
@@ -839,7 +839,7 @@ export const verifyPayment = async (req, res) => {
     // Generate invoice
     const invoiceCount = await Invoice.countDocuments();
     const invoiceNumber = `INV-${new Date().getFullYear()}-${String(invoiceCount + 1).padStart(6, '0')}`;
-    
+
     const invoice = await Invoice.create({
       invoiceNumber,
       clientId: client._id,

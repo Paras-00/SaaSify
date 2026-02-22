@@ -1,4 +1,16 @@
-import { ArrowDownRight, ArrowUpRight, DollarSign, Plus, X } from 'lucide-react';
+import {
+  ArrowDownLeft,
+  ArrowUpRight,
+  Clock,
+  CreditCard,
+  ChevronRight,
+  Download,
+  Loader2,
+  Plus,
+  ShieldCheck,
+  Wallet as WalletIcon,
+  X
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { paymentService } from '../../services/paymentService';
@@ -9,7 +21,7 @@ export default function Wallet() {
   const [balance, setBalance] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showAddFundsModal, setShowAddFundsModal] = useState(false);
+  const [showAddFunds, setShowAddFunds] = useState(false);
 
   useEffect(() => {
     fetchWalletData();
@@ -24,6 +36,7 @@ export default function Wallet() {
       setBalance(balanceRes.data);
       setTransactions(transactionsRes.data.transactions);
     } catch (error) {
+      console.error('Error fetching wallet balance:', error);
       toast.error('Failed to load wallet data');
     } finally {
       setLoading(false);
@@ -31,68 +44,181 @@ export default function Wallet() {
   };
 
   const handleAddFundsSuccess = () => {
-    setShowAddFundsModal(false);
+    setShowAddFunds(false);
     fetchWalletData();
     toast.success('Funds added successfully!');
+  };
+
+  const formatCurrency = (amount, currency = 'INR') => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: currency,
+    }).format(amount);
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-600">Loading wallet...</div>
+        <Loader2 className="animate-spin text-brand-green" size={32} />
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Wallet</h1>
-        <button 
-          onClick={() => setShowAddFundsModal(true)}
-          className="flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+    <div className="font-sans">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-serif text-brand-text-primary font-medium">Wallet & Billing</h1>
+          <p className="text-brand-text-secondary mt-1">Manage your funds and view transaction history.</p>
+        </div>
+        <button
+          onClick={() => setShowAddFunds(true)}
+          className="px-6 py-2.5 bg-brand-green text-white font-semibold rounded-full hover:bg-brand-green-hover transition-all flex items-center gap-2 shadow-sm"
         >
-          <Plus size={20} />
+          <Plus size={18} />
           Add Funds
         </button>
       </div>
 
-      {/* Balance Card */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl shadow-lg p-8 mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <DollarSign size={32} />
-          <h2 className="text-xl font-semibold">Available Balance</h2>
-        </div>
-        <p className="text-5xl font-bold mb-2">
-          ₹{balance?.balance?.toFixed(2) || '0.00'}
-        </p>
-        <p className="text-purple-100">Currency: {balance?.currency || 'INR'}</p>
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column - Balance & Quick Actions */}
+        <div className="space-y-8">
+          {/* Balance Card */}
+          <div className="bg-brand-dark rounded-3xl p-8 border border-gray-300 relative overflow-hidden group">
+            {/* Background Decorations */}
+            {/* Background decoration removed */}
 
-      {/* Transactions */}
-      <div className="bg-white rounded-xl shadow-sm">
-        <div className="p-6 border-b">
-          <h2 className="text-xl font-semibold">Recent Transactions</h2>
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-xl bg-brand-green/10 border border-brand-green/20 flex items-center justify-center text-brand-green">
+                  <WalletIcon size={24} />
+                </div>
+                <h2 className="text-xl font-medium text-brand-text-primary font-serif">Current Balance</h2>
+              </div>
+
+              <div className="mb-6">
+                <span className="text-5xl font-serif text-brand-text-primary block mb-1 tracking-tight">
+                  {formatCurrency(balance?.amount || 0, balance?.currency || 'INR')}
+                </span>
+                <p className="text-brand-text-secondary text-sm flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-brand-green"></span>
+                  Available for immediate use
+                </p>
+              </div>
+
+              <div className="pt-6 border-t border-brand-gray/20 flex items-center justify-between text-sm">
+                <div className="text-brand-text-secondary">Last updated</div>
+                <div className="text-brand-text-primary font-medium">Just now</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-brand-dark border border-gray-300 rounded-2xl p-6">
+            <h3 className="text-lg font-serif text-brand-text-primary mb-4">Quick Actions</h3>
+            <div className="space-y-3">
+              <button
+                onClick={() => setShowAddFunds(true)}
+                className="w-full flex items-center justify-between p-4 rounded-xl bg-brand-gray/5 border border-gray-300 hover:border-[#004643] transition-all text-left text-brand-text-primary group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-brand-green/10 text-brand-green flex items-center justify-center">
+                    <Plus size={20} />
+                  </div>
+                  <span className="font-medium">Add Money</span>
+                </div>
+                <ChevronRight size={18} className="text-gray-500 group-hover:text-brand-green transition-colors" />
+              </button>
+
+              <button
+                className="w-full flex items-center justify-between p-4 rounded-xl bg-brand-gray/5 border border-gray-300 hover:border-[#004643] transition-all text-left text-brand-text-primary group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center">
+                    <Download size={20} />
+                  </div>
+                  <span className="font-medium">Download Statement</span>
+                </div>
+                <ChevronRight size={18} className="text-gray-500 group-hover:text-brand-green transition-colors" />
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="p-6">
-          {transactions.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <p>No transactions yet</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {transactions.map((tx) => (
-                <TransactionItem key={tx._id} transaction={tx} />
-              ))}
-            </div>
-          )}
+
+        {/* Right Column - Transactions */}
+        <div className="lg:col-span-2">
+          <div className="bg-brand-dark border border-gray-300 rounded-2xl p-6 h-full">
+            <h2 className="text-xl font-serif text-brand-text-primary mb-6">Transaction History</h2>
+
+            {loading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="animate-spin h-8 w-8 text-brand-green" />
+              </div>
+            ) : transactions.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="w-16 h-16 rounded-full bg-brand-gray/10 flex items-center justify-center mx-auto mb-4 border border-gray-300">
+                  <Clock className="h-8 w-8 text-brand-text-secondary" />
+                </div>
+                <h3 className="text-lg font-medium text-brand-text-primary mb-1">No transactions yet</h3>
+                <p className="text-brand-text-secondary">Your transaction history will appear here.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {transactions.map((transaction) => {
+                  const isCredit = transaction.type === 'credit';
+                  const StatusIcon = isCredit ? ArrowDownLeft : ArrowUpRight;
+
+                  return (
+                    <div
+                      key={transaction._id}
+                      className="flex items-center justify-between p-4 rounded-xl bg-white border border-gray-300 hover:border-[#004643] transition-all"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isCredit ? 'bg-brand-green/10 text-brand-green' : 'bg-brand-gray/10 text-brand-text-secondary'
+                          }`}>
+                          <StatusIcon size={20} />
+                        </div>
+                        <div>
+                          <p className="font-medium text-brand-text-primary mb-0.5">{transaction.description}</p>
+                          <p className="text-xs text-brand-text-secondary">
+                            {formatDate(transaction.createdAt)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`font-serif font-medium text-lg ${isCredit ? 'text-brand-green' : 'text-brand-text-primary'
+                          }`}>
+                          {isCredit ? '+' : '-'}{formatCurrency(transaction.amount, transaction.currency)}
+                        </p>
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${transaction.status === 'completed' ? 'bg-brand-green/10 text-brand-green border-brand-green/20' :
+                          transaction.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' :
+                            'bg-red-500/10 text-red-500 border-red-500/20'
+                          }`}>
+                          {transaction.status}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Add Funds Modal */}
-      {showAddFundsModal && (
-        <AddFundsModal 
-          onClose={() => setShowAddFundsModal(false)}
+      {showAddFunds && (
+        <AddFundsModal
+          onClose={() => setShowAddFunds(false)}
           onSuccess={handleAddFundsSuccess}
         />
       )}
@@ -131,22 +257,16 @@ function AddFundsModal({ onClose, onSuccess }) {
   const [amount, setAmount] = useState('');
   const [processing, setProcessing] = useState(false);
 
-  const quickAmounts = [100, 500, 1000, 2000, 5000];
-
-  const handleQuickAmount = (value) => {
-    setAmount(value.toString());
-  };
-
   const handleAddFunds = async () => {
     const parsedAmount = parseFloat(amount);
-    
+
     if (!amount || parsedAmount <= 0) {
       toast.error('Please enter a valid amount');
       return;
     }
 
-    if (parsedAmount < 10) {
-      toast.error('Minimum amount is ₹10');
+    if (parsedAmount < 100) {
+      toast.error('Minimum amount is ₹100');
       return;
     }
 
@@ -162,7 +282,7 @@ function AddFundsModal({ onClose, onSuccess }) {
 
       // Initialize Razorpay
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_RXgFDxf85u97LY',
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_Rq11q8EgPkkSJL',
         amount: orderAmount, // Amount in paise
         currency: currency,
         name: 'SaaSify',
@@ -186,7 +306,7 @@ function AddFundsModal({ onClose, onSuccess }) {
           }
         },
         modal: {
-          ondismiss: function() {
+          ondismiss: function () {
             setProcessing(false);
             toast.error('Payment cancelled');
           }
@@ -196,7 +316,7 @@ function AddFundsModal({ onClose, onSuccess }) {
           email: localStorage.getItem('userEmail') || '',
         },
         theme: {
-          color: '#9333ea' // Purple color to match wallet theme
+          color: '#00D285'
         }
       };
 
@@ -210,97 +330,84 @@ function AddFundsModal({ onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-md w-full p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Add Funds to Wallet</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-text-primary/50">
+      <div className="bg-white rounded-2xl w-full max-w-md border border-gray-300 shadow-2xl overflow-hidden relative">
+        {/* Modal Header */}
+        <div className="p-6 border-b border-brand-gray/20 flex items-center justify-between">
+          <h3 className="text-xl font-serif text-brand-text-primary">Add Funds</h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X size={24} />
-          </button>
-        </div>
-
-        {/* Quick Amount Selection */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Quick Select Amount
-          </label>
-          <div className="grid grid-cols-3 gap-3">
-            {quickAmounts.map((value) => (
-              <button
-                key={value}
-                onClick={() => handleQuickAmount(value)}
-                className={`px-4 py-3 rounded-lg border-2 transition-all font-medium ${
-                  amount === value.toString()
-                    ? 'border-purple-600 bg-purple-50 text-purple-700'
-                    : 'border-gray-200 hover:border-purple-300 text-gray-700'
-                }`}
-              >
-                ₹{value}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Custom Amount Input */}
-        <div className="mb-6">
-          <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
-            Or Enter Custom Amount
-          </label>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
-              ₹
-            </span>
-            <input
-              type="number"
-              id="amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00"
-              min="10"
-              step="10"
-              className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            />
-          </div>
-          <p className="text-xs text-gray-500 mt-2">Minimum amount: ₹10</p>
-        </div>
-
-        {/* Summary */}
-        {amount && parseFloat(amount) > 0 && (
-          <div className="bg-purple-50 rounded-lg p-4 mb-6">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-700 font-medium">Amount to Add:</span>
-              <span className="text-2xl font-bold text-purple-600">
-                ₹{parseFloat(amount).toFixed(2)}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+            className="text-brand-text-secondary hover:text-brand-text-primary transition-colors"
             disabled={processing}
           >
-            Cancel
-          </button>
-          <button
-            onClick={handleAddFunds}
-            disabled={processing || !amount || parseFloat(amount) < 10}
-            className="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {processing ? 'Processing...' : 'Proceed to Pay'}
+            <X size={20} />
           </button>
         </div>
 
-        {/* Payment Info */}
-        <p className="text-xs text-gray-500 text-center mt-4">
-          You will be redirected to Razorpay for secure payment
-        </p>
+        {/* Modal Body */}
+        <div className="p-6">
+          <div className="mb-6">
+            <label className="block text-xs font-bold uppercase tracking-wider text-brand-text-secondary mb-2">
+              Amount (INR)
+            </label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-text-secondary font-serif text-lg">₹</span>
+              <input
+                type="number"
+                min="100"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="w-full pl-8 pr-4 py-3 bg-white border-2 border-brand-gray/40 rounded-xl text-brand-text-primary placeholder:text-brand-text-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-green/50 focus:border-brand-green/50 transition-all font-serif text-lg"
+                placeholder="Enter amount"
+                disabled={processing}
+              />
+            </div>
+            <p className="text-xs text-brand-text-secondary mt-2">
+              Minimum deposit amount is ₹100
+            </p>
+          </div>
+
+          <div className="space-y-3 mb-6">
+            <p className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">Quick Select</p>
+            <div className="grid grid-cols-3 gap-3">
+              {[500, 1000, 2000].map((val) => (
+                <button
+                  key={val}
+                  onClick={() => setAmount(val.toString())}
+                  className="py-2 px-3 rounded-lg bg-brand-gray/5 border border-gray-300 text-brand-text-primary text-sm hover:border-[#004643] transition-all"
+                  disabled={processing}
+                >
+                  ₹{val}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-brand-green/5 border border-brand-green/10 rounded-xl p-4 mb-6 flex items-start gap-3">
+            <ShieldCheck className="text-brand-green flex-shrink-0" size={18} />
+            <p className="text-xs text-brand-text-secondary leading-relaxed">
+              Values are secured with 256-bit encryption. Your payment details are never stored on our servers.
+            </p>
+          </div>
+
+          <button
+            onClick={handleAddFunds}
+            disabled={processing || !amount || Number(amount) < 100}
+            className="w-full py-3.5 bg-brand-green hover:bg-brand-green-hover text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
+          >
+            {processing ? (
+              <>
+                <Loader2 className="animate-spin" size={20} />
+                Processing...
+              </>
+            ) : (
+              <>
+                <CreditCard size={20} />
+                Pay ₹{amount || '0'}
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

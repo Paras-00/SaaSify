@@ -25,20 +25,20 @@ export default function ForgotPassword() {
   const validateForm = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
+
     if (!email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!emailRegex.test(email)) {
       newErrors.email = 'Please enter a valid email address';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       toast.error('Please enter a valid email address');
       return;
@@ -54,7 +54,7 @@ export default function ForgotPassword() {
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to send reset link';
       toast.error(errorMessage);
-      
+
       if (error.response?.data?.field === 'email') {
         setErrors({ email: errorMessage });
       }
@@ -65,7 +65,7 @@ export default function ForgotPassword() {
 
   const handleResendEmail = async () => {
     if (timer > 0) return;
-    
+
     setLoading(true);
     try {
       await authService.forgotPassword(email);
@@ -80,85 +80,58 @@ export default function ForgotPassword() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-blue-50 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-brand-black p-4 font-sans">
         <div className="max-w-md w-full">
+          {/* Logo */}
+          <div className="flex items-center justify-center gap-2 mb-8">
+            <div className="w-8 h-8 rounded bg-brand-green flex items-center justify-center">
+              <span className="text-white font-bold text-lg">S</span>
+            </div>
+            <span className="text-2xl font-serif text-brand-text-primary">SaaSify</span>
+          </div>
+
           {/* Success Card */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-            {/* Gradient header */}
-            <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-6 text-center">
-              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle className="text-white" size={40} />
-              </div>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-10 text-center">
+            {/* Icon */}
+            <div className="w-20 h-20 bg-brand-green/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-brand-green/20">
+              <CheckCircle className="text-brand-green" size={40} />
             </div>
 
-            {/* Success content */}
-            <div className="p-8 text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">Check Your Email</h2>
-              <p className="text-gray-600 mb-2">
-                We've sent a password reset link to:
-              </p>
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <p className="text-lg font-semibold text-gray-900 break-all">{email}</p>
-              </div>
-              
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
-                <h3 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
-                  <Mail size={16} />
-                  What to do next:
-                </h3>
-                <ul className="text-sm text-blue-700 space-y-2">
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-0.5">✓</span>
-                    Check your inbox for an email from us
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-0.5">✓</span>
-                    Click the reset link in the email
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-0.5">✓</span>
-                    Create a new password for your account
-                  </li>
-                </ul>
-              </div>
+            <h2 className="text-2xl font-serif font-medium text-brand-text-primary mb-3">Check Your Email</h2>
+            <p className="text-brand-text-secondary text-sm mb-2">
+              We've sent a password reset link to:
+            </p>
+            <p className="font-semibold text-brand-text-primary mb-6 text-sm break-all">{email}</p>
 
-              {/* Resend email button */}
-              <div className="space-y-4">
-                <button
-                  onClick={handleResendEmail}
-                  disabled={timer > 0 || loading}
-                  className={`w-full py-3 rounded-lg font-semibold transition-all ${
-                    timer > 0 || loading
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg'
-                  }`}
-                >
-                  {loading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <Loader2 className="animate-spin" size={20} />
-                      Sending...
-                    </span>
-                  ) : timer > 0 ? (
-                    `Resend in ${timer}s`
-                  ) : (
-                    'Resend Reset Link'
-                  )}
-                </button>
-
-                <div className="border-t border-gray-200 pt-4">
-                  <p className="text-sm text-gray-500 mb-4">
-                    Didn't receive the email? Check your spam folder or try resending.
-                  </p>
-                  <Link
-                    to="/login"
-                    className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-                  >
-                    <ArrowLeft size={16} />
-                    Back to Login
-                  </Link>
-                </div>
-              </div>
+            {/* Steps */}
+            <div className="text-left bg-brand-black/30 border border-brand-gray/20 rounded-xl p-5 mb-6">
+              <h3 className="font-semibold text-brand-text-primary mb-3 flex items-center gap-2 text-sm">
+                <Mail size={15} className="text-brand-green" /> What to do next:
+              </h3>
+              <ul className="text-sm text-brand-text-secondary space-y-2">
+                <li className="flex items-start gap-2"><span className="text-brand-green mt-0.5">✓</span> Check your inbox for an email from us</li>
+                <li className="flex items-start gap-2"><span className="text-brand-green mt-0.5">✓</span> Click the reset link in the email</li>
+                <li className="flex items-start gap-2"><span className="text-brand-green mt-0.5">✓</span> Create a new password for your account</li>
+              </ul>
             </div>
+
+            {/* Resend */}
+            <button
+              onClick={handleResendEmail}
+              disabled={timer > 0 || loading}
+              className="w-full py-3 rounded-xl border-2 border-brand-green text-brand-green font-semibold hover:bg-brand-green hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+            >
+              {loading ? 'Sending…' : timer > 0 ? `Resend in ${timer}s` : 'Resend Reset Link'}
+            </button>
+
+            <p className="text-sm text-brand-text-secondary mb-3">Didn't receive it? Check your spam folder.</p>
+
+            <Link
+              to="/login"
+              className="text-sm text-brand-text-secondary hover:text-brand-green transition-colors"
+            >
+              ← Back to Login
+            </Link>
           </div>
         </div>
       </div>
@@ -166,34 +139,41 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-blue-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-brand-black p-4 font-sans">
       <div className="max-w-md w-full">
+        {/* Logo */}
+        <div className="flex items-center justify-center gap-2 mb-8">
+          <div className="w-8 h-8 rounded bg-brand-green flex items-center justify-center">
+            <span className="text-white font-bold text-lg">S</span>
+          </div>
+          <span className="text-2xl font-serif text-brand-text-primary">SaaSify</span>
+        </div>
+
         {/* Main Card */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-          {/* Gradient header */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-center">
-            <div className="flex items-center justify-center space-x-2">
-              <div className="bg-white/20 p-2 rounded-lg">
-                <Key className="text-white" size={24} />
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
+          <div className="p-6 border-b border-brand-gray/20">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-brand-green/10 rounded-lg flex items-center justify-center border border-brand-green/20">
+                <Key className="text-brand-green" size={20} />
               </div>
-              <h1 className="text-2xl font-bold text-white">Reset Password</h1>
+              <h1 className="text-2xl font-serif font-medium text-brand-text-primary">Reset Password</h1>
             </div>
           </div>
 
           {/* Form content */}
           <div className="p-8">
             {/* Back button */}
-            <Link 
-              to="/login" 
-              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium mb-6 group"
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-2 text-brand-text-secondary hover:text-brand-green font-medium mb-6 group transition-colors"
             >
               <ArrowLeft className="group-hover:-translate-x-1 transition-transform" size={20} />
               Back to Login
             </Link>
 
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Forgot your password?</h2>
-              <p className="text-gray-600">
+              <h2 className="text-2xl font-serif font-medium text-brand-text-primary mb-2">Forgot your password?</h2>
+              <p className="text-brand-text-secondary">
                 Enter your email address and we'll send you a link to reset your password.
               </p>
             </div>
@@ -201,7 +181,7 @@ export default function ForgotPassword() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Input */}
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-semibold text-brand-text-primary mb-2 uppercase tracking-wider">
                   Email Address
                 </label>
                 <div className="relative">
@@ -215,19 +195,17 @@ export default function ForgotPassword() {
                       setEmail(e.target.value);
                       if (errors.email) setErrors({});
                     }}
-                    className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
-                      errors.email 
-                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' 
-                        : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400'
-                    }`}
+                    className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-1 transition-all bg-brand-gray/5 placeholder:text-brand-text-secondary/50 ${errors.email
+                      ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                      : 'border-gray-300 focus:ring-brand-green focus:border-brand-green'
+                      } text-brand-text-primary`}
                     placeholder="you@example.com"
                   />
-                  <Mail className={`absolute left-3 top-1/2 -translate-y-1/2 ${
-                    errors.email ? 'text-red-400' : 'text-gray-400'
-                  }`} size={20} />
+                  <Mail className={`absolute left-3 top-1/2 -translate-y-1/2 ${errors.email ? 'text-red-500' : 'text-brand-text-secondary'
+                    }`} size={20} />
                 </div>
                 {errors.email && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                  <p className="mt-2 text-sm text-red-500 flex items-center gap-1">
                     {errors.email}
                   </p>
                 )}
@@ -237,8 +215,7 @@ export default function ForgotPassword() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3.5 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-              >
+                className="w-full bg-brand-green text-white py-3.5 rounded-full font-bold hover:bg-brand-green-hover transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transform active:scale-[0.98]"              >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
                     <Loader2 className="animate-spin" size={20} />
@@ -251,17 +228,17 @@ export default function ForgotPassword() {
             </form>
 
             {/* Help Text */}
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="mt-8 pt-6 border-t border-brand-gray/10">
+              <div className="bg-brand-gray/5 rounded-lg p-4 border border-brand-gray/10">
+                <h3 className="font-semibold text-brand-text-primary mb-2 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   Need help?
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-brand-text-secondary">
                   If you're having trouble resetting your password, please contact our{' '}
-                  <Link to="/support" className="text-blue-600 hover:text-blue-700 font-medium">
+                  <Link to="/support" className="text-brand-green hover:underline font-medium">
                     support team
                   </Link>
                   .
@@ -271,9 +248,9 @@ export default function ForgotPassword() {
 
             {/* Alternative Options */}
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-brand-text-secondary">
                 Remember your password?{' '}
-                <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+                <Link to="/login" className="text-brand-green hover:underline font-medium">
                   Sign in here
                 </Link>
               </p>
@@ -283,7 +260,7 @@ export default function ForgotPassword() {
 
         {/* Footer */}
         <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-brand-text-secondary">
             We'll send you a secure link to reset your password. The link expires in 1 hour.
           </p>
         </div>

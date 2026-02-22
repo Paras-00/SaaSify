@@ -44,6 +44,18 @@ router.post(
 );
 
 /**
+ * @route   POST /api/auth/verify-login-2fa
+ * @desc    Verify login 2FA code
+ * @access  Public
+ */
+router.post(
+  '/verify-login-2fa',
+  authLimiter,
+  validate(authValidation.verifyLogin2FASchema),
+  authController.verifyLogin2FA
+);
+
+/**
  * @route   POST /api/auth/logout
  * @desc    Logout user
  * @access  Private

@@ -57,6 +57,14 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  login2FACode: {
+    type: String,
+    default: null,
+  },
+  login2FAExpires: {
+    type: Date,
+    default: null,
+  },
 }, {
   timestamps: true,
 });
@@ -67,7 +75,7 @@ UserSchema.index({ emailVerificationToken: 1 });
 UserSchema.index({ passwordResetToken: 1 });
 
 // Virtual for checking if account is locked
-UserSchema.virtual('isLocked').get(function() {
+UserSchema.virtual('isLocked').get(function () {
   return !!(this.lockUntil && this.lockUntil > Date.now());
 });
 

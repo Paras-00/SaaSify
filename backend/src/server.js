@@ -8,7 +8,7 @@ import { initRateLimiters } from './middleware/rateLimit.middleware.js';
 import logger from './utils/logger.js';
 
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
@@ -36,7 +36,7 @@ const startServer = async () => {
     // (used by hosting providers like Docker, PM2, etc.)
     process.on('SIGTERM', () => {
       logger.info('SIGTERM received. Shutting down gracefully...');
-      
+
       // Stop accepting new requests and close the server
       server.close(() => {
         logger.info('Server closed');
@@ -47,7 +47,7 @@ const startServer = async () => {
     // Graceful shutdown when Ctrl + C is pressed in terminal
     process.on('SIGINT', () => {
       logger.info('SIGINT received. Shutting down gracefully...');
-      
+
       server.close(() => {
         logger.info('Server closed');
         process.exit(0); // Exit process successfully

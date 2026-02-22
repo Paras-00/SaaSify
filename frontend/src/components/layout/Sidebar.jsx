@@ -37,13 +37,15 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-white shadow-lg flex flex-col">
+    <aside className="w-64 bg-brand-dark border-r border-brand-gray/20 flex flex-col">
       {/* Logo */}
-      <div className="p-6 border-b">
-        <Link to="/">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-            SaaSify
-          </h1>
+      <div className="p-6 border-b border-brand-gray/10">
+        <Link to="/" className="flex items-center gap-2">
+          {/* Logo Icon */}
+          <div className="w-8 h-8 rounded bg-brand-green flex items-center justify-center">
+            <span className="text-white font-bold text-xl">S</span>
+          </div>
+          <span className="text-xl font-serif text-brand-text-primary">SaaSify</span>
         </Link>
       </div>
 
@@ -54,14 +56,13 @@ export default function Sidebar() {
             <li key={item.path}>
               <Link
                 to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive(item.path)
-                    ? 'bg-purple-50 text-purple-600'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${isActive(item.path)
+                  ? 'bg-brand-green text-white font-semibold'
+                  : 'text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-gray/50'
+                  }`}
               >
-                <item.icon size={20} />
-                <span className="font-medium">{item.label}</span>
+                <item.icon size={20} className={isActive(item.path) ? 'text-white' : 'text-brand-text-secondary group-hover:text-brand-text-primary transition-colors'} />
+                <span className={isActive(item.path) ? 'font-semibold' : 'font-medium'}>{item.label}</span>
               </Link>
             </li>
           ))}
@@ -69,13 +70,13 @@ export default function Sidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="p-4 border-t">
+      <div className="p-4 border-t border-brand-gray/20">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 w-full transition-colors"
+          className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-500 hover:bg-red-500/10 w-full transition-colors group"
         >
-          <LogOut size={20} />
-          <span className="font-medium">Logout</span>
+          <LogOut size={20} className="group-hover:stroke-2" />
+          <span className="font-medium">Sign Out</span>
         </button>
       </div>
     </aside>

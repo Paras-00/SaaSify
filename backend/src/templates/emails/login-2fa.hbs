@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Verification Code – {{companyName}}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body
+    style="margin:0;padding:0;background-color:#EAECEF;font-family:'Inter',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#EAECEF;padding:40px 20px;">
+        <tr>
+            <td align="center">
+                <!-- Main Card Container -->
+                <table width="600" cellpadding="0" cellspacing="0"
+                    style="background-color:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.05);">
+
+                    <!-- Premium Header -->
+                    <tr>
+                        <td style="background-color:#087d51;padding:48px 40px;text-align:center;">
+                            <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                                <tr>
+                                    <td
+                                        style="background-color:rgba(255,255,255,0.2);border-radius:12px;width:44px;height:44px;text-align:center;vertical-align:middle;">
+                                        <span
+                                            style="color:#ffffff;font-weight:700;font-size:24px;line-height:44px;">S</span>
+                                    </td>
+                                    <td style="padding-left:14px;">
+                                        <span
+                                            style="color:#ffffff;font-size:26px;font-weight:700;letter-spacing:-0.5px;">{{companyName}}</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div style="margin-top:24px;color:rgba(255,255,255,0.9);font-size:16px;">Two-Step
+                                Verification</div>
+                        </td>
+                    </tr>
+
+                    <!-- Content Body -->
+                    <tr>
+                        <td style="padding:56px 48px;background-color:#ffffff;text-align:center;">
+                            <h2
+                                style="color:#111827;margin:0 0 16px 0;font-size:28px;font-weight:700;letter-spacing:-0.8px;line-height:1.2;">
+                                Your verification code</h2>
+                            <p style="color:#4B5563;font-size:16px;line-height:1.7;margin:0 0 32px 0;">Hi <strong
+                                    style="color:#111827;">{{firstName}}</strong>, enter the code below to complete your
+                                login.</p>
+
+                            <!-- Verification Code Display -->
+                            <div
+                                style="background-color:#F8FAFC;border:1px solid #E2E8F0;border-radius:16px;padding:32px;display:inline-block;margin-bottom:32px;">
+                                <span
+                                    style="color:#087d51;font-size:42px;font-weight:800;letter-spacing:10px;font-family:monospace;">{{code}}</span>
+                            </div>
+
+                            <div
+                                style="background-color:#FFFBEB;border-left:4px solid #F59E0B;border-radius:0 12px 12px 0;padding:16px 20px;margin:0 0 32px 0;text-align:left;">
+                                <p style="color:#92400E;font-size:14px;line-height:1.6;margin:0;">
+                                    ⏰ This code will expire in <strong>10 minutes</strong>. For security, never share
+                                    this code with anyone.
+                                </p>
+                            </div>
+
+                            <p
+                                style="color:#94A3B8;font-size:13px;line-height:1.6;margin:0;padding-top:24px;border-top:1px solid #F3F4F6;">
+                                If you didn't attempt to log in to your account, please ignore this email or contact
+                                support if you have concerns about your account security.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Premium Green Footer -->
+                    <tr>
+                        <td style="background-color:#087d51;padding:48px 40px;text-align:center;">
+                            <p style="color:rgba(255,255,255,0.7);font-size:14px;margin:0 0 20px 0;line-height:1.6;">
+                                Protecting your digital assets with world-class security standards.
+                            </p>
+                            <div style="height:1px;background-color:rgba(255,255,255,0.1);margin:0 auto 24px auto;">
+                            </div>
+                            <p style="color:rgba(255,255,255,0.9);font-size:14px;margin:0 0 8px 0;">&copy;
+                                {{currentYear}} {{companyName}}. All rights reserved.</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

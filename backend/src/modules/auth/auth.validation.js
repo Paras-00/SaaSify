@@ -79,3 +79,9 @@ export const verify2FASchema = Joi.object({
 export const refreshTokenSchema = Joi.object({
   refreshToken: Joi.string().required(),
 });
+
+// Verify login 2FA validation
+export const verifyLogin2FASchema = Joi.object({
+  email: Joi.string().email().required().lowercase().trim(),
+  code: Joi.string().length(6).required(),
+});

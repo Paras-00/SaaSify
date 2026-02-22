@@ -1,79 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-    .content { background: #fff; padding: 30px; border: 1px solid #e5e7eb; }
-    .invoice-details { background: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0; }
-    .invoice-row { display: flex; justify-content: space-between; margin: 10px 0; }
-    .amount { font-size: 32px; font-weight: bold; color: #667eea; text-align: center; margin: 20px 0; }
-    .button { display: inline-block; background: #667eea; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0; }
-    .footer { text-align: center; margin-top: 30px; color: #6b7280; font-size: 14px; }
-    .warning { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; }
-  </style>
+  <title>Invoice Overdue – {{companyName}}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>⚠️ Invoice Overdue</h1>
-    </div>
-    
-    <div class="content">
-      <p>Hi {{clientName}},</p>
-      
-      <p>This is a reminder that your invoice is now <strong>{{daysOverdue}} days overdue</strong>.</p>
-      
-      <div class="invoice-details">
-        <div class="invoice-row">
-          <strong>Invoice Number:</strong>
-          <span>{{invoiceNumber}}</span>
-        </div>
-        <div class="invoice-row">
-          <strong>Due Date:</strong>
-          <span>{{dueDate}}</span>
-        </div>
-        <div class="invoice-row">
-          <strong>Days Overdue:</strong>
-          <span style="color: #ef4444;">{{daysOverdue}} days</span>
-        </div>
-      </div>
-      
-      <div class="amount">{{currency}} {{amount}}</div>
-      
-      <div class="warning">
-        <strong>⚠️ Action Required:</strong> Please make payment immediately to avoid service suspension or termination.
-      </div>
-      
-      <p><strong>Payment Options:</strong></p>
-      <ul>
-        <li>Pay online via credit card or UPI</li>
-        <li>Use your wallet balance</li>
-        <li>Bank transfer (contact support)</li>
-      </ul>
-      
-      <div style="text-align: center;">
-        <a href="{{viewInvoiceUrl}}" class="button">Pay Now</a>
-      </div>
-      
-      <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
-        <strong>Important:</strong><br>
-        • 7+ days overdue: Services may be suspended<br>
-        • 30+ days overdue: Services may be terminated
-      </p>
-      
-      <p>If you've already made payment, please disregard this email. If you have any questions, please contact our support team.</p>
-      
-      <p>Thank you,<br>The SaaSify Team</p>
-    </div>
-    
-    <div class="footer">
-      <p>SaaSify - Domain & Hosting Platform</p>
-      <p>This is an automated email. Please do not reply directly.</p>
-    </div>
-  </div>
+
+<body
+  style="margin:0;padding:0;background-color:#EAECEF;font-family:'Inter',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#EAECEF;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0"
+          style="background-color:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.05);">
+
+          <!-- Premium Danger Header -->
+          <tr>
+            <td style="background-color:#991B1B;padding:48px 40px;text-align:center;">
+              <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                <tr>
+                  <td
+                    style="background-color:rgba(255,255,255,0.2);border-radius:12px;width:44px;height:44px;text-align:center;vertical-align:middle;">
+                    <span style="color:#ffffff;font-weight:700;font-size:24px;line-height:44px;">S</span>
+                  </td>
+                  <td style="padding-left:14px;">
+                    <span
+                      style="color:#ffffff;font-size:26px;font-weight:700;letter-spacing:-0.5px;">{{companyName}}</span>
+                  </td>
+                </tr>
+              </table>
+              <div style="margin-top:20px;color:rgba(255,255,255,0.9);font-size:16px;">Invoice Action Required</div>
+            </td>
+          </tr>
+
+          <!-- Content Body -->
+          <tr>
+            <td style="padding:56px 48px;background-color:#ffffff;">
+              <h2
+                style="color:#111827;margin:0 0 16px 0;font-size:28px;font-weight:700;letter-spacing:-0.8px;line-height:1.2;">
+                Your invoice is overdue</h2>
+              <p style="color:#4B5563;font-size:16px;line-height:1.7;margin:0 0 32px 0;">Hi <strong
+                  style="color:#111827;">{{firstName}}</strong>, your invoice <strong>#{{invoiceNumber}}</strong> is
+                currently overdue. Please pay now to avoid service interruption.</p>
+
+              <!-- Payment Details Box -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 32px 0;">
+                <tr>
+                  <td style="background-color:#FEF2F2;border-radius:20px;padding:32px;border:1px solid #FEE2E2;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding-bottom:12px;border-bottom:1px solid #FEE2E2;">
+                          <div
+                            style="color:#991B1B;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">
+                            Invoice Number</div>
+                          <div style="color:#111827;font-size:16px;font-weight:700;">#{{invoiceNumber}}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:12px 0;border-bottom:1px solid #FEE2E2;">
+                          <div
+                            style="color:#991B1B;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">
+                            Amount Due</div>
+                          <div style="color:#EF4444;font-size:24px;font-weight:800;">${{amount}}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding-top:12px;">
+                          <div
+                            style="color:#991B1B;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">
+                            Overdue Days</div>
+                          <div style="color:#111827;font-size:16px;font-weight:600;">{{overdueDays}} days</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- CTA -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px 0;">
+                <tr>
+                  <td align="center">
+                    <a href="{{frontendUrl}}/dashboard/invoices"
+                      style="background-color:#087d51;color:#ffffff;text-decoration:none;padding:18px 48px;border-radius:12px;font-weight:600;font-size:16px;display:inline-block;box-shadow:0 8px 20px rgba(8,125,81,0.25);">Pay
+                      Now →</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- High-Importance Red Footer -->
+          <tr>
+            <td style="background-color:#991B1B;padding:48px 40px;text-align:center;">
+              <p style="color:rgba(255,255,255,0.7);font-size:14px;margin:0 0 20px 0;line-height:1.6;">
+                Failure to pay overdue invoices may result in temporary suspension of your services.
+              </p>
+              <div style="height:1px;background-color:rgba(255,255,255,0.1);margin:0 auto 24px auto;"></div>
+              <p style="color:rgba(255,255,255,0.9);font-size:14px;margin:0 0 8px 0;">&copy; {{currentYear}}
+                {{companyName}}. All rights reserved.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
+
 </html>

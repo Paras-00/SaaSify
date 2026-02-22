@@ -66,7 +66,7 @@ See `.env.development` for all available environment variables.
 
 Key variables:
 - `NODE_ENV` - Environment (development/staging/production)
-- `PORT` - Server port (default: 4000)
+- `PORT` - Server port (default: 5000)
 - `MONGO_URI` - MongoDB connection string
 - `REDIS_HOST` - Redis host
 - `JWT_SECRET` - JWT signing secret
@@ -96,7 +96,7 @@ npm run create-indexes
 ### Using Docker
 ```bash
 docker build -t hosting-platform-backend .
-docker run -p 4000:4000 --env-file .env.production hosting-platform-backend
+docker run -p 5000:5000 --env-file .env.production hosting-platform-backend
 ```
 
 ### Using PM2
@@ -107,7 +107,7 @@ pm2 start src/workers/index.js --name worker
 
 ## 📚 API Documentation
 
-API runs on `http://localhost:4000/api`
+API runs on `http://localhost:5000/api`
 
 ### Endpoints
 - `/api/auth` - Authentication

@@ -24,6 +24,10 @@ import { Toaster } from 'react-hot-toast';
 import Wallet from './pages/dashboard/Wallet';
 import useAuthStore from './store/authStore';
 
+import Setup2FA from './pages/auth/Setup2FA';
+import VerifyEmail from './pages/auth/VerifyEmail';
+import VerifyLogin2FA from './pages/auth/VerifyLogin2FA';
+
 function App() {
   const { isAuthenticated } = useAuthStore();
 
@@ -64,8 +68,11 @@ function App() {
         {/* Auth Routes */}
         <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" />} />
         <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/dashboard" />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/setup-2fa" element={<Setup2FA />} />
+        <Route path="/verify-2fa" element={!isAuthenticated ? <VerifyLogin2FA /> : <Navigate to="/dashboard" />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Protected Dashboard Routes */}
         <Route

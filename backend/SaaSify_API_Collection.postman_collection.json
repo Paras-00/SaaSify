@@ -19,7 +19,7 @@
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "http://localhost:4000",
+			"value": "http://localhost:5000",
 			"type": "string"
 		},
 		{
@@ -52,8 +52,12 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/health",
-							"host": ["{{baseUrl}}"],
-							"path": ["health"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
 						},
 						"description": "Check if server is running"
 					},
@@ -69,8 +73,12 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api",
-							"host": ["{{baseUrl}}"],
-							"path": ["api"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api"
+							]
 						},
 						"description": "Get API information and available endpoints"
 					},
@@ -116,8 +124,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/register",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "auth", "register"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
 						},
 						"description": "Register a new user account"
 					},
@@ -142,8 +156,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/verify-email",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "auth", "verify-email"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"verify-email"
+							]
 						},
 						"description": "Verify email address with OTP code"
 					},
@@ -188,8 +208,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/login",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "auth", "login"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
 						},
 						"description": "Login with email and password"
 					},
@@ -202,8 +228,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/logout",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "auth", "logout"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
 						},
 						"description": "Logout current user"
 					},
@@ -244,8 +276,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/refresh-token",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "auth", "refresh-token"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"refresh-token"
+							]
 						},
 						"description": "Refresh access token using refresh token"
 					},
@@ -270,8 +308,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/forgot-password",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "auth", "forgot-password"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"forgot-password"
+							]
 						},
 						"description": "Request password reset email"
 					},
@@ -296,8 +340,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/reset-password",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "auth", "reset-password"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"reset-password"
+							]
 						},
 						"description": "Reset password with token from email"
 					},
@@ -319,8 +369,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/change-password",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "auth", "change-password"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"change-password"
+							]
 						},
 						"description": "Change password for authenticated user"
 					},
@@ -333,8 +389,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/enable-2fa",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "auth", "enable-2fa"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"enable-2fa"
+							]
 						},
 						"description": "Generate 2FA QR code and secret"
 					},
@@ -356,8 +418,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/verify-2fa",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "auth", "verify-2fa"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"verify-2fa"
+							]
 						},
 						"description": "Verify and activate 2FA with token"
 					},
@@ -379,8 +447,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/disable-2fa",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "auth", "disable-2fa"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"disable-2fa"
+							]
 						},
 						"description": "Disable 2FA with verification token"
 					},
@@ -398,8 +472,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/clients/me",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "clients", "me"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"me"
+							]
 						},
 						"description": "Get current client profile"
 					},
@@ -421,8 +501,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/clients/me",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "clients", "me"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"me"
+							]
 						},
 						"description": "Update client profile information"
 					},
@@ -435,8 +521,15 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/clients/me/wallet",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "clients", "me", "wallet"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"me",
+								"wallet"
+							]
 						},
 						"description": "Get wallet balance and recent transactions"
 					},
@@ -458,8 +551,16 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/clients/me/wallet/add",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "clients", "me", "wallet", "add"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"me",
+								"wallet",
+								"add"
+							]
 						},
 						"description": "Add funds to wallet"
 					},
@@ -472,8 +573,15 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/clients/me/activity?page=1&limit=20&action=login",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "clients", "me", "activity"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"me",
+								"activity"
+							],
 							"query": [
 								{
 									"key": "page",
@@ -509,8 +617,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/domains/search?q=example&tlds=com,net,org&limit=10",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "domains", "search"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"domains",
+								"search"
+							],
 							"query": [
 								{
 									"key": "q",
@@ -542,8 +656,15 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/domains/availability/example.com",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "domains", "availability", "example.com"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"domains",
+								"availability",
+								"example.com"
+							]
 						},
 						"description": "Check if specific domain is available"
 					},
@@ -559,8 +680,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/domains/suggestions?keyword=tech&limit=10",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "domains", "suggestions"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"domains",
+								"suggestions"
+							],
 							"query": [
 								{
 									"key": "keyword",
@@ -586,8 +713,15 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/domains/pricing/com",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "domains", "pricing", "com"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"domains",
+								"pricing",
+								"com"
+							]
 						},
 						"description": "Get pricing for specific TLD"
 					},
@@ -603,8 +737,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/domains/tlds",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "domains", "tlds"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"domains",
+								"tlds"
+							]
 						},
 						"description": "Get list of all supported TLDs with pricing"
 					},
@@ -617,8 +757,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/domains/my-domains",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "domains", "my-domains"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"domains",
+								"my-domains"
+							]
 						},
 						"description": "Get user's registered domains"
 					},
@@ -631,8 +777,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/domains/:id",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "domains", ":id"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"domains",
+								":id"
+							],
 							"variable": [
 								{
 									"key": "id",
@@ -656,8 +808,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/cart",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "cart"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"cart"
+							]
 						},
 						"description": "Get current user's shopping cart"
 					},
@@ -679,8 +836,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/cart/add",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "cart", "add"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"cart",
+								"add"
+							]
 						},
 						"description": "Add item to cart"
 					},
@@ -702,8 +865,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/cart/:itemId",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "cart", ":itemId"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"cart",
+								":itemId"
+							],
 							"variable": [
 								{
 									"key": "itemId",
@@ -722,8 +891,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/cart/:itemId",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "cart", ":itemId"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"cart",
+								":itemId"
+							],
 							"variable": [
 								{
 									"key": "itemId",
@@ -742,8 +917,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/cart/clear",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "cart", "clear"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"cart",
+								"clear"
+							]
 						},
 						"description": "Clear entire cart"
 					},
@@ -765,8 +946,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/cart/coupon",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "cart", "coupon"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"cart",
+								"coupon"
+							]
 						},
 						"description": "Apply coupon code to cart"
 					},
@@ -779,8 +966,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/cart/coupon",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "cart", "coupon"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"cart",
+								"coupon"
+							]
 						},
 						"description": "Remove applied coupon"
 					},
@@ -802,8 +995,14 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/cart/checkout",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "cart", "checkout"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"cart",
+								"checkout"
+							]
 						},
 						"description": "Checkout and create order"
 					},
@@ -824,8 +1023,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/api/admin/users?page=1&limit=20&role=client&status=active&search=john",
-									"host": ["{{baseUrl}}"],
-									"path": ["api", "admin", "users"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"users"
+									],
 									"query": [
 										{
 											"key": "page",
@@ -863,8 +1068,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/api/admin/users/:id",
-									"host": ["{{baseUrl}}"],
-									"path": ["api", "admin", "users", ":id"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"users",
+										":id"
+									],
 									"variable": [
 										{
 											"key": "id",
@@ -892,8 +1104,15 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/api/admin/users/:id",
-									"host": ["{{baseUrl}}"],
-									"path": ["api", "admin", "users", ":id"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"users",
+										":id"
+									],
 									"variable": [
 										{
 											"key": "id",
@@ -912,8 +1131,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/api/admin/users/:id",
-									"host": ["{{baseUrl}}"],
-									"path": ["api", "admin", "users", ":id"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"users",
+										":id"
+									],
 									"variable": [
 										{
 											"key": "id",
@@ -941,8 +1167,16 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/api/admin/users/:id/suspend",
-									"host": ["{{baseUrl}}"],
-									"path": ["api", "admin", "users", ":id", "suspend"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"users",
+										":id",
+										"suspend"
+									],
 									"variable": [
 										{
 											"key": "id",
@@ -975,8 +1209,16 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/api/admin/clients/:id/credit",
-									"host": ["{{baseUrl}}"],
-									"path": ["api", "admin", "clients", ":id", "credit"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"clients",
+										":id",
+										"credit"
+									],
 									"variable": [
 										{
 											"key": "id",
@@ -1000,8 +1242,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/api/admin/audit-logs?page=1&limit=50&userId=user_id&action=login&startDate=2026-01-01&endDate=2026-02-03",
-									"host": ["{{baseUrl}}"],
-									"path": ["api", "admin", "audit-logs"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"audit-logs"
+									],
 									"query": [
 										{
 											"key": "page",
@@ -1049,8 +1297,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/api/admin/stats?period=month&startDate=2026-01-01&endDate=2026-02-03",
-									"host": ["{{baseUrl}}"],
-									"path": ["api", "admin", "stats"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"stats"
+									],
 									"query": [
 										{
 											"key": "period",

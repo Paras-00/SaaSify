@@ -146,6 +146,7 @@ export const EMAIL_TEMPLATE = {
   SERVICE_EXPIRING: 'service-expiring',
   UPGRADE_COMPLETE: 'upgrade-complete',
   REFUND_PROCESSED: 'refund-processed',
+  LOGIN_2FA: 'login-2fa',
 };
 
 /**
