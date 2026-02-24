@@ -4,7 +4,7 @@ const walletValidation = {
   addFunds: Joi.object({
     amount: Joi.number().min(1).required(),
     gateway: Joi.string().valid('razorpay', 'stripe').required(),
-    paymentData: Joi.object().optional(),
+    paymentData: Joi.object().unknown(true).optional(),
   }),
 
   payInvoice: Joi.object({

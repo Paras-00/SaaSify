@@ -540,7 +540,7 @@ export const createWalletRazorpayOrder = async (req, res) => {
       amount,
       currency,
       receipt,
-      notes: { 
+      notes: {
         clientId: client._id.toString(),
         userId: userId,
         type: 'wallet_topup'
@@ -550,7 +550,7 @@ export const createWalletRazorpayOrder = async (req, res) => {
     logger.info(`Razorpay wallet order created for client ${client._id}`);
 
     return successResponse(res, {
-      orderId: order.id,
+      orderId: order.orderId,
       amount: order.amount,
       currency: order.currency,
       keyId: razorpayService.keyId,
