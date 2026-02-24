@@ -200,15 +200,24 @@ export default function DomainDetails() {
             <div className="flex items-center mb-4">
               <CalendarIcon className="h-6 w-6 text-blue-600 mr-2" />
               <h2 className="text-xl font-semibold text-gray-900">Registration Information</h2>
+              {domain.liveStatus && (
+                <span className="ml-3 px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-medium rounded border border-blue-100">
+                  Live Status
+                </span>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Registration Date</p>
-                <p className="font-medium text-gray-900">{formatDate(domain.registrationDate)}</p>
+                <p className="font-medium text-gray-900">
+                  {formatDate(domain.registrationDate || domain.liveStatus?.createdAt)}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-600 mb-1">Expiry Date</p>
-                <p className="font-medium text-gray-900">{formatDate(domain.expiryDate)}</p>
+                <p className="font-medium text-gray-900">
+                  {formatDate(domain.expiryDate || domain.liveStatus?.expires)}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-600 mb-1">Registration Period</p>

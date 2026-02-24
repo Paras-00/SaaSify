@@ -83,7 +83,7 @@ export default function ResetPassword() {
       toast.success('Password reset successful!');
       navigate('/login');
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to reset password';
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to reset password';
       toast.error(errorMessage);
 
       // Handle token expiration

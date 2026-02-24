@@ -452,6 +452,16 @@ export const checkout = async (req, res) => {
       order[0].paymentStatus = 'paid';
       order[0].paidAmount = cart.total;
       order[0].paidAt = new Date();
+
+      // Create invoice for the paid order
+      try {
+        const invoice = await invoiceService.createInvoiceFromOrder(order[0], client);
+        order[0].invoiceId = invoice._id;
+      } catch (invoiceError) {
+        logger.error(`Failed to create invoice for order ${orderNumber}:`, invoiceError);
+        // Don't fail the whole checkout if invoice creation fails, but log it
+      }
+
       await order[0].save();
 
       // Process domain registrations - Create domain records and queue for registration
@@ -738,6 +748,15 @@ export const verifyPayment = async (req, res) => {
     order.paidAmount = order.total;
     order.paidAt = new Date();
     order.razorpayPaymentId = razorpayPaymentId;
+
+    // Create invoice for the paid order
+    try {
+      const invoice = await invoiceService.createInvoiceFromOrder(order, client);
+      order.invoiceId = invoice._id;
+    } catch (invoiceError) {
+      logger.error(`Failed to create invoice for order ${order.orderNumber}:`, invoiceError);
+    }
+
     await order.save();
 
     // Process domain registrations

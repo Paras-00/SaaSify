@@ -35,7 +35,7 @@ class InvoiceService {
   async generateInvoiceNumber() {
     const year = new Date().getFullYear();
     const month = String(new Date().getMonth() + 1).padStart(2, '0');
-    
+
     // Count invoices this month
     const startOfMonth = new Date(year, new Date().getMonth(), 1);
     const count = await Invoice.countDocuments({
@@ -184,7 +184,7 @@ class InvoiceService {
       // Table headers
       doc.fillColor('#667eea');
       doc.rect(50, currentY - 10, 495, 30).fill();
-      
+
       doc
         .fontSize(10)
         .fillColor('#ffffff')
@@ -197,6 +197,8 @@ class InvoiceService {
 
       // Table items
       doc.fillColor('#333333');
+      const currencySymbol = invoice.currency === 'INR' ? 'Rs' : '$';
+
       invoice.items.forEach((item, index) => {
         if (index > 0 && index % itemsPerPage === 0) {
           doc.addPage();
@@ -213,8 +215,8 @@ class InvoiceService {
           .fillColor('#333333')
           .text(item.description, 60, currentY, { width: 250 })
           .text(item.quantity.toString(), 320, currentY, { width: 40, align: 'center' })
-          .text(`$${item.unitPrice.toFixed(2)}`, 370, currentY, { width: 70, align: 'right' })
-          .text(`$${item.total.toFixed(2)}`, 450, currentY, { width: 85, align: 'right' });
+          .text(`${currencySymbol}${item.unitPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 370, currentY, { width: 70, align: 'right' })
+          .text(`${currencySymbol}${item.total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 450, currentY, { width: 85, align: 'right' });
 
         currentY += 25;
       });
@@ -228,7 +230,7 @@ class InvoiceService {
         .fillColor('#666666')
         .text('Subtotal:', totalsX, currentY, { width: 70, align: 'right' })
         .fillColor('#333333')
-        .text(`$${invoice.subtotal.toFixed(2)}`, 450, currentY, { width: 85, align: 'right' });
+        .text(`${currencySymbol}${invoice.subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 450, currentY, { width: 85, align: 'right' });
 
       currentY += 20;
 
@@ -237,7 +239,7 @@ class InvoiceService {
           .fillColor('#666666')
           .text('Discount:', totalsX, currentY, { width: 70, align: 'right' })
           .fillColor('#10b981')
-          .text(`-$${invoice.totalDiscount.toFixed(2)}`, 450, currentY, { width: 85, align: 'right' });
+          .text(`-${currencySymbol}${invoice.totalDiscount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 450, currentY, { width: 85, align: 'right' });
         currentY += 20;
       }
 
@@ -246,7 +248,7 @@ class InvoiceService {
           .fillColor('#666666')
           .text('Tax:', totalsX, currentY, { width: 70, align: 'right' })
           .fillColor('#333333')
-          .text(`$${invoice.totalTax.toFixed(2)}`, 450, currentY, { width: 85, align: 'right' });
+          .text(`${currencySymbol}${invoice.totalTax.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 450, currentY, { width: 85, align: 'right' });
         currentY += 20;
       }
 
@@ -258,7 +260,7 @@ class InvoiceService {
         .text('TOTAL:', totalsX, currentY + 5, { width: 70, align: 'right' })
         .fontSize(14)
         .fillColor('#667eea')
-        .text(`$${invoice.total.toFixed(2)}`, 450, currentY + 5, { width: 85, align: 'right' });
+        .text(`${currencySymbol}${invoice.total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 450, currentY + 5, { width: 85, align: 'right' });
 
       // Footer
       const footerY = doc.page.height - 100;
@@ -324,20 +326,22 @@ class InvoiceService {
    */
   async markAsPaid(invoiceId, paymentDetails) {
     try {
-      const invoice = await Invoice.findByIdAndUpdate(
-        invoiceId,
-        {
-          status: 'paid',
-          paidAt: new Date(),
-          paymentMethod: paymentDetails.method,
-          paymentDetails: {
-            transactionId: paymentDetails.transactionId,
-            gateway: paymentDetails.gateway,
-            amount: paymentDetails.amount,
-          },
-        },
-        { new: true }
+      const invoice = await Invoice.findById(invoiceId);
+      if (!invoice) {
+        throw new Error('Invoice not found');
+      }
+
+      // Use model's markAsPaid method for consistent logic
+      await invoice.markAsPaid(
+        paymentDetails.transactionId,
+        paymentDetails.amount
       );
+
+      // Update payment method specifically
+      if (paymentDetails.method) {
+        invoice.paymentMethod = paymentDetails.method;
+        await invoice.save();
+      }
 
       logger.info(`Invoice ${invoice.invoiceNumber} marked as paid`);
       return invoice;

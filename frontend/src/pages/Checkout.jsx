@@ -3,10 +3,17 @@ import { useEffect, useState } from 'react';
 
 import cartService from '../services/cartService';
 import useAuthStore from '../store/authStore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { invoiceService } from '../services/invoiceService';
+import { paymentService } from '../services/paymentService';
+import { loadRazorpayScript } from '../utils/scriptLoader';
+import toast from 'react-hot-toast';
 
 export default function Checkout() {
   const [cart, setCart] = useState(null);
+  const [invoice, setInvoice] = useState(null);
+  const [searchParams] = useSearchParams();
+  const invoiceId = searchParams.get('invoiceId');
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
@@ -28,10 +35,31 @@ export default function Checkout() {
   const [termsAgreed, setTermsAgreed] = useState(false);
 
   useEffect(() => {
-    loadCart();
+    if (invoiceId) {
+      loadInvoice();
+    } else {
+      loadCart();
+    }
     loadRazorpayScript();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [invoiceId]);
+
+  const loadInvoice = async () => {
+    try {
+      setLoading(true);
+      const response = await invoiceService.getInvoiceById(invoiceId);
+      if (response.data?.invoice) {
+        setInvoice(response.data.invoice);
+      } else {
+        throw new Error('Invoice not found');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to load invoice');
+      toast.error('Failed to load invoice');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadCart = async () => {
     try {
@@ -47,21 +75,6 @@ export default function Checkout() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-      if (document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]')) {
-        resolve(true);
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
   };
 
   const handleInputChange = (e) => {
@@ -97,31 +110,47 @@ export default function Checkout() {
       setProcessing(true);
       setError('');
 
-      // Transform billingInfo to billingDetails with nested address
-      const checkoutData = {
-        billingDetails: {
-          firstName: billingInfo.firstName,
-          lastName: billingInfo.lastName,
-          email: billingInfo.email,
-          phone: billingInfo.phone,
-          address: {
-            street: billingInfo.address,
-            city: billingInfo.city,
-            state: billingInfo.state,
-            zipCode: billingInfo.zipCode,
-            country: getCountryCode(billingInfo.country),
-          },
-        },
-        paymentMethod: 'razorpay',
-        termsAgreed: termsAgreed,
-      };
+      if (invoiceId && invoice) {
+        // Direct invoice payment
+        const orderData = {
+          amount: Math.round(invoice.total * 100), // convert to paise
+          currency: invoice.currency || 'INR',
+          invoiceId: invoice._id,
+        };
 
-      const response = await cartService.checkout(checkoutData);
-
-      if (response.data?.order && response.data.order.razorpayOrderId) {
-        await handleRazorpayPayment(response.data.order);
+        const response = await paymentService.createRazorpayOrder(orderData);
+        if (response.data?.order) {
+          await handleRazorpayPayment(response.data.order, true);
+        } else {
+          throw new Error('Failed to create payment order');
+        }
       } else {
-        throw new Error('Invalid order response');
+        // Cart checkout
+        const checkoutData = {
+          billingDetails: {
+            firstName: billingInfo.firstName,
+            lastName: billingInfo.lastName,
+            email: billingInfo.email,
+            phone: billingInfo.phone,
+            address: {
+              street: billingInfo.address,
+              city: billingInfo.city,
+              state: billingInfo.state,
+              zipCode: billingInfo.zipCode,
+              country: getCountryCode(billingInfo.country),
+            },
+          },
+          paymentMethod: 'razorpay',
+          termsAgreed: termsAgreed,
+        };
+
+        const response = await cartService.checkout(checkoutData);
+
+        if (response.data?.order && response.data.order.razorpayOrderId) {
+          await handleRazorpayPayment(response.data.order, false);
+        } else {
+          throw new Error('Invalid order response');
+        }
       }
     } catch (err) {
       console.error('Checkout error:', err);
@@ -130,28 +159,39 @@ export default function Checkout() {
     }
   };
 
-  const handleRazorpayPayment = async (order) => {
+  const handleRazorpayPayment = async (order, isInvoicePayment = false) => {
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-      amount: order.razorpayAmount, // Amount in paise from backend
-      currency: order.razorpayCurrency || 'INR',
+      amount: isInvoicePayment ? order.amount : order.razorpayAmount,
+      currency: (isInvoicePayment ? order.currency : order.razorpayCurrency) || 'INR',
       name: 'SaaSify',
-      description: 'Domain Registration',
-      order_id: order.razorpayOrderId,
+      description: isInvoicePayment ? `Payment for Invoice ${invoice.invoiceNumber}` : 'Domain Registration',
+      order_id: isInvoicePayment ? order.id : order.razorpayOrderId,
       handler: async function (response) {
         try {
-          const verifyData = {
-            orderId: order._id,
-            razorpayOrderId: response.razorpay_order_id,
-            razorpayPaymentId: response.razorpay_payment_id,
-            razorpaySignature: response.razorpay_signature,
-          };
+          let result;
+          if (isInvoicePayment) {
+            const verifyData = {
+              invoiceId: invoice._id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            };
+            result = await paymentService.verifyRazorpayPayment(verifyData);
+          } else {
+            const verifyData = {
+              orderId: order._id,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            };
+            result = await cartService.verifyPayment(verifyData);
+          }
 
-          const result = await cartService.verifyPayment(verifyData);
-
-          if (result.data?.success) {
+          if (result.success || result.data?.success) {
+            toast.success('Payment successful!');
             navigate('/dashboard/invoices', {
-              state: { message: 'Payment successful! Your order has been placed.' }
+              state: { message: 'Payment successful!' }
             });
           } else {
             setError('Payment verification failed');
@@ -190,7 +230,7 @@ export default function Checkout() {
     );
   }
 
-  if (!cart || cart.items.length === 0) {
+  if (!invoiceId && (!cart || cart.items.length === 0)) {
     return (
       <div className="min-h-screen bg-brand-black py-20 font-sans">
         <div className="max-w-4xl mx-auto px-4 text-center">
@@ -198,14 +238,37 @@ export default function Checkout() {
             <ShoppingCart className="h-8 w-8 text-brand-text-secondary" />
           </div>
           <p className="text-xl text-brand-text-primary">Your cart is empty</p>
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="mt-4 text-brand-green hover:underline"
+          >
+            Go to Dashboard
+          </button>
         </div>
       </div>
     );
   }
 
-  const subtotal = cart.total || 0;
-  const tax = subtotal * 0.18;
-  const total = subtotal + tax;
+  if (invoiceId && !invoice) {
+    return (
+      <div className="min-h-screen bg-brand-black py-20 font-sans">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <p className="text-xl text-brand-text-primary">Invoice not found</p>
+          <button
+            onClick={() => navigate('/dashboard/invoices')}
+            className="mt-4 text-brand-green hover:underline"
+          >
+            Back to Invoices
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const subtotal = invoiceId ? invoice.subtotal : (cart.total || 0);
+  const tax = invoiceId ? (invoice.totalTax || 0) : (subtotal * 0.18);
+  const total = invoiceId ? invoice.total : (subtotal + tax);
+  const currency = invoiceId ? (invoice.currency || 'INR') : 'USD';
 
   return (
     <div className="min-h-screen bg-brand-black py-12 font-sans">
@@ -404,7 +467,7 @@ export default function Checkout() {
                 ) : (
                   <>
                     <Lock size={18} />
-                    Pay ${total.toFixed(2)}
+                    Pay {currency === 'INR' ? '₹' : '$'}{total.toFixed(2)}
                   </>
                 )}
               </button>
@@ -414,32 +477,49 @@ export default function Checkout() {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-300 sticky top-24">
-              <h2 className="text-xl font-serif text-brand-text-primary mb-6">Order Summary</h2>
+              <h2 className="text-xl font-serif text-brand-text-primary mb-6">
+                {invoiceId ? 'Invoice Summary' : 'Order Summary'}
+              </h2>
 
               <div className="space-y-4 mb-8">
-                {cart.items.map((item) => (
-                  <div key={item.id} className="flex justify-between text-sm">
-                    <span className="text-brand-text-secondary truncate mr-2">
-                      {item.name} <span className="text-xs text-white/50">({item.period}y)</span>
-                    </span>
-                    <span className="font-medium text-brand-text-primary">${(item.price * item.period).toFixed(2)}</span>
-                  </div>
-                ))}
+                {invoiceId ? (
+                  invoice.items.map((item, idx) => (
+                    <div key={idx} className="flex justify-between text-sm">
+                      <span className="text-brand-text-secondary truncate mr-2">
+                        {item.description}
+                      </span>
+                      <span className="font-medium text-brand-text-primary">
+                        {currency === 'INR' ? '₹' : '$'}{item.total.toFixed(2)}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  cart.items.map((item) => (
+                    <div key={item.id} className="flex justify-between text-sm">
+                      <span className="text-brand-text-secondary truncate mr-2">
+                        {item.name} <span className="text-xs text-brand-text-secondary/50">({item.period}y)</span>
+                      </span>
+                      <span className="font-medium text-brand-text-primary">
+                        ${(item.price * item.period).toFixed(2)}
+                      </span>
+                    </div>
+                  ))
+                )}
               </div>
 
               <div className="border-t border-brand-gray/20 pt-6 space-y-3">
                 <div className="flex justify-between text-brand-text-secondary">
                   <span>Subtotal</span>
-                  <span className="text-brand-text-primary">${subtotal.toFixed(2)}</span>
+                  <span className="text-brand-text-primary">{currency === 'INR' ? '₹' : '$'}{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-brand-text-secondary">
-                  <span>Tax (18% GST)</span>
-                  <span className="text-brand-text-primary">${tax.toFixed(2)}</span>
+                  <span>Tax {invoiceId && '(GST)'}</span>
+                  <span className="text-brand-text-primary">{currency === 'INR' ? '₹' : '$'}{tax.toFixed(2)}</span>
                 </div>
                 <div className="border-t border-brand-gray/20 pt-4">
                   <div className="flex justify-between text-xl font-medium">
                     <span className="text-brand-text-primary">Total</span>
-                    <span className="text-brand-green">${total.toFixed(2)}</span>
+                    <span className="text-brand-green">{currency === 'INR' ? '₹' : '$'}{total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

@@ -89,7 +89,7 @@ export default function Login() {
       toast.success('Login successful!');
       navigate('/dashboard');
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Login failed';
       toast.error(errorMessage);
 
       if (error.response?.data?.field) {

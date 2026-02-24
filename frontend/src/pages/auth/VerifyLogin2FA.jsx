@@ -100,7 +100,7 @@ export default function VerifyLogin2FA() {
             toast.success('Login successful!');
             navigate('/dashboard', { replace: true });
         } catch (error) {
-            const errorMessage = error.response?.data?.message || 'Verification failed';
+            const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Verification failed';
             toast.error(errorMessage);
 
             // Focus first input on failure and clear code

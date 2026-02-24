@@ -34,6 +34,7 @@ export default function VerifyEmail() {
             } catch (error) {
                 setStatus('error');
                 setMessage(
+                    error.response?.data?.error ||
                     error.response?.data?.message ||
                     'Verification failed. The link may be invalid or expired.'
                 );

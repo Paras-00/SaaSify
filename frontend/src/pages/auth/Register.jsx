@@ -102,7 +102,8 @@ export default function Register() {
       toast.success('Verification email resent!');
       setResendCooldown(60);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to resend email');
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Failed to resend email';
+      toast.error(errorMessage);
     } finally {
       setResendLoading(false);
     }
@@ -136,7 +137,7 @@ export default function Register() {
       setEmailSent(true);
       toast.success('Account created! Please verify your email.');
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Registration failed';
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Registration failed';
       toast.error(errorMessage);
       if (error.response?.data?.field) {
         setErrors(prev => ({ ...prev, [error.response.data.field]: errorMessage }));

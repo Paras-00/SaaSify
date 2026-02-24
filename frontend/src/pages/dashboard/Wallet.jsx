@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { paymentService } from '../../services/paymentService';
 import toast from 'react-hot-toast';
 import { walletService } from '../../services/walletService';
+import { loadRazorpayScript } from '../../utils/scriptLoader';
 
 export default function Wallet() {
   const [balance, setBalance] = useState(null);
@@ -273,6 +274,14 @@ function AddFundsModal({ onClose, onSuccess }) {
     try {
       setProcessing(true);
 
+      // Load Razorpay script
+      const res = await loadRazorpayScript();
+      if (!res) {
+        toast.error('Razorpay SDK failed to load. Are you online?');
+        setProcessing(false);
+        return;
+      }
+
       // Create Razorpay order for wallet
       const orderResponse = await paymentService.createWalletRazorpayOrder({
         amount: parsedAmount,
@@ -283,24 +292,28 @@ function AddFundsModal({ onClose, onSuccess }) {
       // Initialize Razorpay
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_Rq11q8EgPkkSJL',
-        amount: orderAmount, // Amount in paise
+        amount: Math.round(orderAmount * 100), // Ensure amount is in paise
         currency: currency,
         name: 'SaaSify',
         description: 'Add Funds to Wallet',
         order_id: orderId,
         handler: async function (response) {
           try {
-            // Verify payment on backend
-            await paymentService.verifyRazorpayPayment({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
+            // Verify payment on backend using wallet service
+            await walletService.addFunds({
+              amount: parsedAmount,
+              gateway: 'razorpay',
+              paymentData: {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }
             });
 
             onSuccess();
           } catch (error) {
             console.error('Payment verification failed:', error);
-            toast.error('Payment verification failed. Please contact support.');
+            toast.error(error.response?.data?.error || 'Payment verification failed');
           } finally {
             setProcessing(false);
           }

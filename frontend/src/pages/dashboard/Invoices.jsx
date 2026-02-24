@@ -92,8 +92,11 @@ export default function Invoices() {
         setInvoices(response.data.invoices || []);
         setTotalPages(response.data.pagination?.totalPages || 1);
 
-        // Calculate stats
-        if (response.data.invoices) {
+        // Use stats from backend if available
+        if (response.data.stats) {
+          setStats(response.data.stats);
+        } else if (response.data.invoices) {
+          // Fallback to client-side calculation (less accurate for pagination)
           const allInvoices = response.data.invoices;
           setStats({
             total: allInvoices.length,
@@ -144,7 +147,14 @@ export default function Invoices() {
   const handleDownloadPDF = async (invoiceId, e) => {
     e.stopPropagation();
     try {
-      await invoiceService.downloadInvoicePDF(invoiceId);
+      const blob = await invoiceService.downloadInvoicePDF(invoiceId);
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `invoice-${invoiceId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
       toast.success('Invoice downloaded successfully');
     } catch (error) {
       console.error('Download error:', error);
@@ -368,7 +378,7 @@ function InvoiceCard({ invoice, onClick, onDownload, formatDate, formatCurrency 
         <div className="flex flex-col items-end gap-4">
           <div className="text-right">
             <div className="text-2xl font-serif text-brand-text-primary">
-              {formatCurrency(invoice.totalAmount, invoice.currency)}
+              {formatCurrency(invoice.total, invoice.currency)}
             </div>
             {invoice.status === 'partially_paid' && invoice.paidAmount > 0 && (
               <p className="text-sm text-brand-green">
