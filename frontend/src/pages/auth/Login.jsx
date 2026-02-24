@@ -153,7 +153,7 @@ export default function Login() {
 
           {/* Footer */}
           <div className="relative z-10 flex items-center gap-6 text-[10px] text-brand-text-secondary uppercase tracking-wider font-medium mt-12">
-            <span>© 2024 SaaSify Inc.</span>
+            <span>© 2026 SaaSify Inc.</span>
             <span className="w-1 h-1 rounded-full bg-brand-gray/20"></span>
             <Link to="/privacy" className="hover:text-brand-text-primary transition-colors">Privacy Policy</Link>
           </div>
