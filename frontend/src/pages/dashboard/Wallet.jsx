@@ -107,7 +107,7 @@ export default function Wallet() {
 
               <div className="mb-6">
                 <span className="text-5xl font-serif text-brand-text-primary block mb-1 tracking-tight">
-                  {formatCurrency(balance?.amount || 0, balance?.currency || 'INR')}
+                  {formatCurrency(balance?.balance || 0, 'INR')}
                 </span>
                 <p className="text-brand-text-secondary text-sm flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-brand-green"></span>
@@ -174,7 +174,7 @@ export default function Wallet() {
             ) : (
               <div className="space-y-4">
                 {transactions.map((transaction) => {
-                  const isCredit = transaction.type === 'credit';
+                  const isCredit = transaction.type === 'credit' || (transaction.type === 'payment' && transaction.description?.toLowerCase().includes('top-up'));
                   const StatusIcon = isCredit ? ArrowDownLeft : ArrowUpRight;
 
                   return (
@@ -257,6 +257,20 @@ function AddFundsModal({ onClose, onSuccess }) {
   const [amount, setAmount] = useState('');
   const [processing, setProcessing] = useState(false);
 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]')) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handleAddFunds = async () => {
     const parsedAmount = parseFloat(amount);
 
@@ -273,28 +287,40 @@ function AddFundsModal({ onClose, onSuccess }) {
     try {
       setProcessing(true);
 
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        toast.error('Failed to load Razorpay SDK');
+        setProcessing(false);
+        return;
+      }
+
       // Create Razorpay order for wallet
       const orderResponse = await paymentService.createWalletRazorpayOrder({
         amount: parsedAmount,
       });
 
-      const { orderId, amount: orderAmount, currency } = orderResponse.data;
+      const orderData = orderResponse.data || orderResponse;
+      const { orderId, amount: orderAmount, currency } = orderData;
 
       // Initialize Razorpay
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_Rq11q8EgPkkSJL',
-        amount: orderAmount, // Amount in paise
+        amount: Math.round(orderAmount * 100), // Amount in paise
         currency: currency,
         name: 'SaaSify',
         description: 'Add Funds to Wallet',
         order_id: orderId,
         handler: async function (response) {
           try {
-            // Verify payment on backend
-            await paymentService.verifyRazorpayPayment({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
+            // Verify payment on backend via wallet topup endpoint
+            await walletService.addFunds({
+              amount: parsedAmount,
+              gateway: 'razorpay',
+              paymentData: {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }
             });
 
             onSuccess();

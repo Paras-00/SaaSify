@@ -108,6 +108,7 @@ export const addFundsToWallet = async (req, res) => {
 
     let paymentResult;
     let gatewayTransactionId;
+    let verifiedAmount;
 
     // Process payment based on gateway
     if (gateway === 'razorpay') {
@@ -123,6 +124,7 @@ export const addFundsToWallet = async (req, res) => {
       const payment = await razorpayService.getPayment(paymentData.razorpay_payment_id);
       paymentResult = payment;
       gatewayTransactionId = payment.id;
+      verifiedAmount = payment.amount;
     } else if (gateway === 'stripe') {
       if (!paymentData || !paymentData.payment_intent_id) {
         return errorResponse(res, 'Payment intent ID required', 400);
@@ -136,30 +138,31 @@ export const addFundsToWallet = async (req, res) => {
 
       paymentResult = payment;
       gatewayTransactionId = payment.id;
+      verifiedAmount = payment.amount;
     } else {
       return errorResponse(res, 'Invalid gateway', 400);
     }
 
     // Add funds to wallet
-    client.walletBalance += amount;
+    client.walletBalance += verifiedAmount;
     await client.save();
 
     // Create transaction record
     const transaction = await Transaction.create({
       clientId: client._id,
       userId,
-      transactionId: `TXN-${Date.now()}-${client._id}`,
+      transactionId: `TXN-WLT-${Date.now()}-${client._id.toString().slice(-4)}`,
       type: 'payment',
       gateway,
       gatewayTransactionId,
-      amount,
+      amount: verifiedAmount,
       currency: paymentResult.currency || 'INR',
-      netAmount: amount,
-      status: 'success',
+      netAmount: verifiedAmount,
+      status: 'completed',
       description: `Wallet top-up via ${gateway}`,
     });
 
-    logger.info(`Wallet funds added for client ${client._id}: ₹${amount}`);
+    logger.info(`Wallet funds added for client ${client._id}: ₹${verifiedAmount}`);
 
     return successResponse(res, {
       newBalance: client.walletBalance,

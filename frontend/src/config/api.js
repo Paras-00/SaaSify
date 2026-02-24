@@ -79,12 +79,12 @@ api.interceptors.response.use(
       }
     }
 
-    // Handle other errors (but don't show toast for 401s on auth pages to avoid spam)
-    const authPages = ['/login', '/register', '/verify-2fa', '/forgot-password', '/reset-password', '/verify-email'];
+    // Handle other errors (but don't show toast for auth pages as they handle their own errors)
+    const authPages = ['/login', '/register', '/verify-2fa', '/forgot-password', '/reset-password', '/verify-email', '/setup-2fa'];
     const isAuthPage = authPages.some(page => window.location.pathname.includes(page));
 
-    if (error.response?.status !== 401 || !isAuthPage) {
-      const message = error.response?.data?.message || error.message || 'Something went wrong';
+    if (!isAuthPage) {
+      const message = error.response?.data?.error || error.response?.data?.message || error.message || 'Something went wrong';
       toast.error(message);
     }
 

@@ -52,7 +52,7 @@ export default function ForgotPassword() {
       setSubmitted(true);
       setTimer(60); // Start 60-second timer
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to send reset link';
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to send reset link';
       toast.error(errorMessage);
 
       if (error.response?.data?.field === 'email') {
@@ -72,7 +72,8 @@ export default function ForgotPassword() {
       toast.success('Reset link re-sent to your email!');
       setTimer(60); // Restart timer
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to re-send reset link');
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to re-send reset link';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -102,7 +102,8 @@ export default function Register() {
       toast.success('Verification email resent!');
       setResendCooldown(60);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to resend email');
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Failed to resend email';
+      toast.error(errorMessage);
     } finally {
       setResendLoading(false);
     }
@@ -136,7 +137,7 @@ export default function Register() {
       setEmailSent(true);
       toast.success('Account created! Please verify your email.');
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Registration failed';
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Registration failed';
       toast.error(errorMessage);
       if (error.response?.data?.field) {
         setErrors(prev => ({ ...prev, [error.response.data.field]: errorMessage }));
@@ -247,19 +248,12 @@ export default function Register() {
 
             <div className="bg-brand-gray/5 border-l-2 border-brand-green p-6 rounded-r-lg max-w-md">
               <p className="font-serif italic text-brand-text-primary/90 text-sm mb-4">"SaaSify transformed our deployment pipeline. We went from weekly releases to daily updates with zero downtime."</p>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-brand-gray/20"></div>
-                <div>
-                  <div className="text-brand-text-primary font-bold text-xs">Elena K.</div>
-                  <div className="text-brand-text-secondary text-[10px] uppercase tracking-wider">CTO, Vertex Logic</div>
-                </div>
-              </div>
             </div>
           </div>
 
           {/* Footer */}
           <div className="relative z-10 flex items-center gap-6 text-[10px] text-brand-text-secondary uppercase tracking-wider font-medium">
-            <span>© 2024 SaaSify Automation Inc.</span>
+            <span>© 2026 SaaSify Automation Inc.</span>
           </div>
         </div>
 

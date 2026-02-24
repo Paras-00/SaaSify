@@ -38,8 +38,9 @@ export default function Setup2FA() {
                 }
             } catch (err) {
                 console.error(err);
-                toast.error('Failed to load 2FA setup details.');
-                setError('Could not load QR code. Please refresh or try logging in again.');
+                const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Failed to load 2FA setup details.';
+                toast.error(errorMessage);
+                setError(errorMessage);
             } finally {
                 setLoading(false);
             }
@@ -68,8 +69,9 @@ export default function Setup2FA() {
             navigate('/login');
         } catch (err) {
             console.error(err);
-            setError('Invalid code. Please try again.');
-            toast.error('Verification failed');
+            const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Invalid code. Please try again.';
+            setError(errorMessage);
+            toast.error(errorMessage);
             setVerifying(false);
         }
     };

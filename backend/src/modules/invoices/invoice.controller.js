@@ -37,14 +37,28 @@ export const getMyInvoices = async (req, res) => {
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const sortOrder = order === 'asc' ? 1 : -1;
 
-    const [invoices, total] = await Promise.all([
+    const [invoices, total, stats] = await Promise.all([
       Invoice.find(query)
         .sort({ [sortBy]: sortOrder })
         .skip(skip)
         .limit(parseInt(limit))
         .lean(),
       Invoice.countDocuments(query),
+      Invoice.aggregate([
+        { $match: { clientId: client._id } },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: 1 },
+            paid: { $sum: { $cond: [{ $eq: ['$status', 'paid'] }, 1, 0] } },
+            unpaid: { $sum: { $cond: [{ $eq: ['$status', 'unpaid'] }, 1, 0] } },
+            overdue: { $sum: { $cond: [{ $eq: ['$status', 'overdue'] }, 1, 0] } },
+          }
+        }
+      ])
     ]);
+
+    const summaryStats = stats.length > 0 ? stats[0] : { total: 0, paid: 0, unpaid: 0, overdue: 0 };
 
     return successResponse(res, {
       invoices,
@@ -52,8 +66,9 @@ export const getMyInvoices = async (req, res) => {
         page: parseInt(page),
         limit: parseInt(limit),
         total,
-        pages: Math.ceil(total / parseInt(limit)),
+        totalPages: Math.ceil(total / parseInt(limit)),
       },
+      stats: summaryStats
     }, 'Invoices retrieved successfully');
   } catch (error) {
     logger.error('Get invoices failed:', error);

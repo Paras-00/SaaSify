@@ -31,23 +31,48 @@ export default function Dashboard() {
         if (!isMounted) return;
 
         // Unwrap the { success, data, message } wrapper each service returns
-        const domains = Array.isArray(domainRes?.data) ? domainRes.data : [];
-        const invoices = Array.isArray(invoiceRes?.data) ? invoiceRes.data : [];
+        const domains = Array.isArray(domainRes?.data?.domains) ? domainRes.data.domains :
+          (Array.isArray(domainRes?.data) ? domainRes.data : []);
+        const invoices = Array.isArray(invoiceRes?.data?.invoices) ? invoiceRes.data.invoices :
+          (Array.isArray(invoiceRes?.data) ? invoiceRes.data : []);
         const wallet = walletRes?.data || {};
 
         // Calculate stats
-        const activeDomains = domains.filter(d => d.auto_renew).length;
-        const pendingInvoices = invoices.filter(i => i.status === 'pending').length;
+        const activeDomains = domains.filter(d => ['active', 'locked', 'pending', 'expiring_soon'].includes(d.status)).length;
+        const pendingInvoices = invoices.filter(i => ['unpaid', 'overdue', 'partially_paid', 'pending'].includes(i.status)).length;
 
-        // Mock data for monthly spend if not available
-        const monthlySpend = 124.50;
+        // Calculate dynamic monthly spend from paid invoices
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        const monthlySpend = invoices
+          .filter(i => i.status === 'paid' && i.paidAt &&
+            new Date(i.paidAt).getMonth() === currentMonth &&
+            new Date(i.paidAt).getFullYear() === currentYear)
+          .reduce((sum, i) => sum + (i.total || 0), 0);
 
-        // Mock recent activity
-        const activities = [
-          { id: 1, type: 'domain_renewed', description: 'saasify.io renewed for 1 year', time: '2 hours ago', icon: Globe },
-          { id: 2, type: 'invoice_paid', description: 'Invoice #INV-2024-001 paid', time: '1 day ago', icon: FileText },
-          { id: 3, type: 'funds_added', description: '$50.00 added to wallet', time: '2 days ago', icon: WalletIcon },
-        ];
+        // Combine domains and invoices for recent activity
+        const domainActivities = domains.slice(0, 5).map(d => ({
+          id: d._id,
+          type: 'domain_renewed',
+          description: `${d.domainName} is ${d.status}`,
+          rawTime: d.updatedAt || d.createdAt,
+          time: formatDate(d.updatedAt || d.createdAt),
+          icon: Globe
+        }));
+
+        const invoiceActivities = invoices.slice(0, 5).map(i => ({
+          id: i._id,
+          type: 'invoice_paid',
+          description: `Invoice ${i.invoiceNumber} is ${i.status}`,
+          rawTime: i.updatedAt || i.createdAt,
+          time: formatDate(i.updatedAt || i.createdAt),
+          icon: FileText
+        }));
+
+        const activities = [...domainActivities, ...invoiceActivities]
+          .sort((a, b) => new Date(b.rawTime) - new Date(a.rawTime))
+          .slice(0, 5);
 
         setStats({
           activeDomains,

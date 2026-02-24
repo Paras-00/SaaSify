@@ -59,10 +59,18 @@ export default function InvoiceDetails() {
   const handleDownloadPDF = async () => {
     try {
       setDownloading(true);
-      await invoiceService.downloadInvoicePDF(id);
+      const blob = await invoiceService.downloadInvoicePDF(id);
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `invoice-${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      toast.success('Invoice downloaded successfully');
     } catch (err) {
       console.error('Error downloading PDF:', err);
-      alert('Failed to download invoice PDF');
+      toast.error('Failed to download invoice PDF');
     } finally {
       setDownloading(false);
     }
@@ -222,7 +230,7 @@ export default function InvoiceDetails() {
                         {formatCurrency(item.unitPrice, invoice.currency)}
                       </td>
                       <td className="px-6 py-4 text-right text-sm font-medium text-brand-text-primary">
-                        {formatCurrency(item.amount, invoice.currency)}
+                        {formatCurrency(item.total, invoice.currency)}
                       </td>
                     </tr>
                   ))
@@ -248,20 +256,20 @@ export default function InvoiceDetails() {
               </span>
             </div>
 
-            {invoice.discount > 0 && (
+            {invoice.totalDiscount > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-brand-text-secondary">Discount:</span>
                 <span className="font-medium text-brand-green">
-                  -{formatCurrency(invoice.discount, invoice.currency)}
+                  -{formatCurrency(invoice.totalDiscount, invoice.currency)}
                 </span>
               </div>
             )}
 
-            {invoice.tax > 0 && (
+            {invoice.totalTax > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-brand-text-secondary">Tax:</span>
                 <span className="font-medium text-brand-text-primary">
-                  {formatCurrency(invoice.tax, invoice.currency)}
+                  {formatCurrency(invoice.totalTax, invoice.currency)}
                 </span>
               </div>
             )}
