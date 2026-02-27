@@ -70,7 +70,7 @@ const domainRenewalWorker = new Worker(
             await Transaction.findByIdAndUpdate(
               invoice.transactionId,
               {
-                status: 'completed',
+                status: 'success',
                 metadata: {
                   ...invoice.metadata,
                   renewalOrderId: renewalResult.orderId,

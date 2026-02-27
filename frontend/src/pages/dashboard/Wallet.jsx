@@ -199,7 +199,7 @@ export default function Wallet() {
                           }`}>
                           {isCredit ? '+' : '-'}{formatCurrency(transaction.amount, transaction.currency)}
                         </p>
-                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${transaction.status === 'completed' ? 'bg-brand-green/10 text-brand-green border-brand-green/20' :
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${transaction.status === 'success' ? 'bg-brand-green/10 text-brand-green border-brand-green/20' :
                           transaction.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' :
                             'bg-red-500/10 text-red-500 border-red-500/20'
                           }`}>
@@ -410,7 +410,7 @@ function AddFundsModal({ onClose, onSuccess }) {
           </div>
 
           <div className="bg-brand-green/5 border border-brand-green/10 rounded-xl p-4 mb-6 flex items-start gap-3">
-            <ShieldCheck className="text-brand-green flex-shrink-0" size={18} />
+            <ShieldCheck className="text-brand-green shrink-0" size={18} />
             <p className="text-xs text-brand-text-secondary leading-relaxed">
               Values are secured with 256-bit encryption. Your payment details are never stored on our servers.
             </p>

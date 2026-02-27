@@ -77,7 +77,7 @@ const domainRegistrationWorker = new Worker(
         await Transaction.findByIdAndUpdate(
           order.transactionId,
           {
-            status: 'completed',
+            status: 'success',
             metadata: {
               ...order.metadata,
               registrarOrderId: registrationResult.orderId,
