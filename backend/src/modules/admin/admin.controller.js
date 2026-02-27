@@ -109,7 +109,7 @@ export const getUserById = async (req, res) => {
     const [orderCount, totalSpent, activityCount] = await Promise.all([
       Order.countDocuments({ userId: id }),
       Transaction.aggregate([
-        { $match: { userId: user._id, type: 'debit', status: 'completed' } },
+        { $match: { userId: user._id, type: 'debit', status: 'success' } },
         { $group: { _id: null, total: { $sum: '$amount' } } },
       ]),
       ActivityLog.countDocuments({ userId: id }),
@@ -333,7 +333,7 @@ export const addClientCredit = async (req, res) => {
       amount,
       currency: client.walletCurrency,
       description: `Admin credit: ${reason}`,
-      status: 'completed',
+      status: 'success',
       paymentMethod: 'admin',
       metadata: {
         adminId: adminUserId,
@@ -512,7 +512,7 @@ export const getDashboardStats = async (req, res) => {
       Order.countDocuments({ status: 'pending' }),
       Order.countDocuments({ status: 'completed' }),
       Transaction.aggregate([
-        { $match: { type: 'debit', status: 'completed' } },
+        { $match: { type: 'debit', status: 'success' } },
         { $group: { _id: null, total: { $sum: '$amount' } } },
       ]),
       Transaction.aggregate([
@@ -537,7 +537,7 @@ export const getDashboardStats = async (req, res) => {
       {
         $match: {
           type: 'debit',
-          status: 'completed',
+          status: 'success',
           ...(Object.keys(dateFilter).length && { createdAt: dateFilter }),
         },
       },

@@ -202,7 +202,7 @@ export const payInvoice = async (req, res) => {
           amount: invoice.total,
           currency: invoice.currency || 'USD',
           netAmount: invoice.total,
-          status: 'completed',
+          status: 'success',
           description: `Payment for invoice ${invoice.invoiceNumber}`,
         });
 
@@ -242,7 +242,7 @@ export const payInvoice = async (req, res) => {
           currency: razorpayPayment.currency,
           fee: razorpayPayment.fee || 0,
           netAmount: razorpayPayment.amount - (razorpayPayment.fee || 0),
-          status: razorpayPayment.status === 'captured' ? 'completed' : 'pending',
+          status: razorpayPayment.status === 'captured' ? 'success' : 'pending',
           paymentDetails: {
             method: razorpayPayment.method,
             cardLast4: razorpayPayment.card?.last4,
@@ -288,7 +288,7 @@ export const payInvoice = async (req, res) => {
           amount: stripePayment.amount,
           currency: stripePayment.currency,
           netAmount: stripePayment.amount,
-          status: 'completed',
+          status: 'success',
           description: `Payment for invoice ${invoice.invoiceNumber}`,
         });
 

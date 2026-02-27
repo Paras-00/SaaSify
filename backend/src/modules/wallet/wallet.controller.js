@@ -158,7 +158,7 @@ export const addFundsToWallet = async (req, res) => {
       amount: verifiedAmount,
       currency: paymentResult.currency || 'INR',
       netAmount: verifiedAmount,
-      status: 'completed',
+      status: 'success',
       description: `Wallet top-up via ${gateway}`,
     });
 
@@ -222,7 +222,7 @@ export const payInvoiceFromWallet = async (req, res) => {
       amount: invoice.total,
       currency: invoice.currency || 'USD',
       netAmount: invoice.total,
-      status: 'completed',
+      status: 'success',
       description: `Payment for invoice ${invoice.invoiceNumber} via wallet`,
     });
 
@@ -280,7 +280,7 @@ export const adjustWalletBalance = async (req, res) => {
       amount: Math.abs(amount),
       currency: client.currency || 'USD',
       netAmount: Math.abs(amount),
-      status: 'completed',
+      status: 'success',
       description: `Admin adjustment: ${reason}`,
     });
 

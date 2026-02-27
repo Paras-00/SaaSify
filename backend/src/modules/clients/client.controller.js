@@ -169,7 +169,7 @@ export const addWalletCredit = async (req, res) => {
       amount,
       currency: client.walletCurrency,
       description: `Wallet credit added via ${paymentMethod}`,
-      status: 'completed',
+      status: 'success',
       paymentMethod,
       metadata: {
         paymentDetails,

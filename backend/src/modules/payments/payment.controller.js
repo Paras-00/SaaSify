@@ -102,7 +102,7 @@ export const verifyRazorpayPayment = async (req, res) => {
       currency: payment.currency,
       fee: payment.fee,
       netAmount: payment.amount - payment.fee,
-      status: payment.status === 'captured' ? 'completed' : 'pending',
+      status: payment.status === 'captured' ? 'success' : 'pending',
       paymentDetails: {
         method: payment.method,
         cardLast4: payment.card?.last4,
@@ -261,7 +261,7 @@ export const confirmStripePayment = async (req, res) => {
       amount: paymentIntent.amount,
       currency: paymentIntent.currency,
       netAmount: paymentIntent.amount,
-      status: 'completed',
+      status: 'success',
       description: `Payment for invoice ${invoice.invoiceNumber}`,
     });
 
@@ -391,7 +391,7 @@ export const createRefund = async (req, res) => {
       amount: refund.amount,
       currency: refund.currency,
       netAmount: refund.amount,
-      status: refund.status === 'processed' || refund.status === 'succeeded' ? 'completed' : 'pending',
+      status: refund.status === 'processed' || refund.status === 'succeeded' ? 'success' : 'pending',
       description: `Refund for transaction ${transactionId}`,
     });
 
