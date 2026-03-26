@@ -1,6 +1,6 @@
 # SaaSify - Complete MERN Hosting Platform
 
-🎉 **ALL PHASES COMPLETE** 🎉
+🎉 ***ALL PHASES COMPLETE*** 🎉
 
 A production-ready hosting and domain management platform built with the MERN stack - similar to WHMCS.
 
